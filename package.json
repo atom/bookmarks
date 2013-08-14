@@ -1,0 +1,4 @@
+{
+  "main": "./lib/bookmarks",
+  "description": "Can mark lines, then jump back to them"
+}
