@@ -8,7 +8,7 @@ module.exports =
 class BookmarksView extends SelectList
   @viewClass: -> "#{super} bookmarks-view overlay from-top"
 
-  filterKey: 'bookmarkFilterText'
+  filterKey: 'filterText'
 
   initialize: ->
     super
@@ -22,7 +22,7 @@ class BookmarksView extends SelectList
 
   getFilterText: (bookmark) ->
     segments = []
-    bookmarkRow = bookmark.getStartPosition().row
+    bookmarkRow = bookmark.marker.getStartPosition().row
     segments.push(bookmarkRow)
     if bufferPath = bookmark.buffer.getPath()
       segments.push(bufferPath)
@@ -31,19 +31,20 @@ class BookmarksView extends SelectList
     segments.join(' ')
 
   getLineText: (bookmark) ->
-    bookmark.buffer.lineForRow(bookmark.getStartPosition().row)?.trim()
+    bookmark.buffer.lineForRow(bookmark.marker.getStartPosition().row)?.trim()
 
   populateBookmarks: ->
-    markers = []
+    bookmarks = []
     attributes = class: 'bookmark'
     for buffer in project.getBuffers()
       for marker in buffer.findMarkers(attributes)
-        marker.bookmarkFilterText = @getFilterText(marker)
-        markers.push(marker)
-    @setArray(markers)
+        bookmark = {marker, buffer}
+        bookmark.fitlerText = @getFilterText(bookmark)
+        bookmarks.push(bookmark)
+    @setArray(bookmarks)
 
   itemForElement: (bookmark) ->
-    bookmarkRow = bookmark.getStartPosition().row
+    bookmarkRow = bookmark.marker.getStartPosition().row
     if filePath = bookmark.buffer.getPath()
       bookmarkLocation = "#{path.basename(filePath)}:#{bookmarkRow + 1}"
     else
@@ -68,7 +69,7 @@ class BookmarksView extends SelectList
   confirmed : (bookmark) ->
     for editor in rootView.getEditors()
       if editor.getBuffer() is bookmark.buffer
-        editor.activeEditSession.setSelectedBufferRange(bookmark.getRange(), autoscroll: true)
+        editor.activeEditSession.setSelectedBufferRange(bookmark.marker.getRange(), autoscroll: true)
 
   attach: ->
     super
