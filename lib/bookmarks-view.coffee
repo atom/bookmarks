@@ -1,8 +1,6 @@
 path = require 'path'
 
-{$$} = require 'space-pen'
-
-SelectList = require 'select-list'
+{$$, SelectList} = require 'atom-api'
 
 module.exports =
 class BookmarksView extends SelectList
