@@ -1,5 +1,4 @@
 {_, RootView} = require 'atom'
-shell = require 'shell'
 
 describe "Bookmarks package", ->
   [editor, editSession, displayBuffer] = []
@@ -13,7 +12,7 @@ describe "Bookmarks package", ->
     editor = rootView.getActiveView()
     editSession = editor.activeEditSession
     displayBuffer = editSession.displayBuffer
-    spyOn(shell, 'beep')
+    spyOn(atom, 'beep')
 
   describe "toggling bookmarks", ->
     it "creates a marker when toggled", ->
@@ -56,11 +55,11 @@ describe "Bookmarks package", ->
 
       editor.trigger 'bookmarks:jump-to-next-bookmark'
       expect(editSession.getCursor().getBufferPosition()).toEqual [5, 10]
-      expect(shell.beep.callCount).toBe 1
+      expect(atom.beep.callCount).toBe 1
 
       editor.trigger 'bookmarks:jump-to-previous-bookmark'
       expect(editSession.getCursor().getBufferPosition()).toEqual [5, 10]
-      expect(shell.beep.callCount).toBe 2
+      expect(atom.beep.callCount).toBe 2
 
     describe "with one bookmark", ->
       beforeEach ->

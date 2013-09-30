@@ -1,5 +1,4 @@
 {_} = require 'atom'
-shell = require 'shell'
 
 module.exports =
 class Bookmarks
@@ -64,7 +63,7 @@ class Bookmarks
     if bookmarkMarker
       @editor.activeEditSession.setSelectedBufferRange(bookmarkMarker.getBufferRange(), autoscroll: true)
     else
-      shell.beep()
+      atom.beep()
 
   getPreviousBookmark: (bufferRow) ->
     markers = @findBookmarkMarkers()
