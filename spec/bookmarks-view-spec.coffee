@@ -43,7 +43,7 @@ describe "Bookmarks package", ->
 
       lines = editor.find('.bookmarked')
       expect(lines.length).toEqual 1
-      expect(lines.attr('linenumber')).toEqual '3'
+      expect(lines).toHaveClass 'line-number-3'
 
       editor.trigger 'bookmarks:toggle-bookmark'
       expect(editor.find('.bookmarked').length).toEqual 0

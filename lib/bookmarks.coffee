@@ -1,4 +1,4 @@
-{_} = require 'atom'
+{$, _} = require 'atom'
 
 module.exports =
 class Bookmarks
@@ -46,12 +46,14 @@ class Bookmarks
   renderBookmarkMarkers: =>
     return unless @gutter.isVisible()
 
-    @gutter.find(".line-number.bookmarked").removeClass('bookmarked')
+    @gutter.removeClassFromAllLines('bookmarked')
 
     markers = @findBookmarkMarkers()
     for marker in markers
       row = marker.getBufferRange().start.row
-      @gutter.find(".line-number[lineNumber=#{row}]").addClass('bookmarked')
+      @gutter.addClassToLine(row, 'bookmarked')
+
+    null
 
   ### Internal ###
 
