@@ -5,7 +5,7 @@ describe "Bookmarks package", ->
 
   beforeEach ->
     window.rootView = new RootView
-    rootView.open('sample.js')
+    rootView.openSync('sample.js')
     rootView.enableKeymap()
     atom.activatePackage('bookmarks', immediate: true)
     rootView.attachToDom()
