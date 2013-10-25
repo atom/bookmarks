@@ -5,7 +5,7 @@
       {
         'label': 'Bookmark'
         'submenu': [
-          { 'label': 'View all', 'command': 'bookmarks:view-all' }
+          { 'label': 'View All', 'command': 'bookmarks:view-all' }
           { 'label': 'Toggle Bookmark', 'command': 'bookmarks:toggle-bookmark' }
           { 'label': 'Jump to Next Bookmark', 'command': 'bookmarks:jump-to-next-bookmark' }
           { 'label': 'Jump to Previous Bookmark', 'command': 'bookmarks:jump-to-previous-bookmark' }
