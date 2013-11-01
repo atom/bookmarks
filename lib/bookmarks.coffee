@@ -23,6 +23,7 @@ class Bookmarks
     @editor.command 'bookmarks:toggle-bookmark', @toggleBookmark
     @editor.command 'bookmarks:jump-to-next-bookmark', @jumpToNextBookmark
     @editor.command 'bookmarks:jump-to-previous-bookmark', @jumpToPreviousBookmark
+    @editor.command 'bookmarks:clear-bookmarks', @clearBookmarks
 
   toggleBookmark: =>
     cursors = @editor.getCursors()
@@ -35,6 +36,10 @@ class Bookmarks
       else
         newmark = @createBookmarkMarker(position.row)
 
+    @renderBookmarkMarkers()
+
+  clearBookmarks: =>
+    bookmark.destroy() for bookmark in @findBookmarkMarkers()
     @renderBookmarkMarkers()
 
   jumpToNextBookmark: =>

@@ -48,6 +48,17 @@ describe "Bookmarks package", ->
       editor.trigger 'bookmarks:toggle-bookmark'
       expect(editor.find('.bookmarked').length).toEqual 0
 
+    it "clears all bookmarks", ->
+      editSession.setCursorBufferPosition([3, 10])
+      editor.trigger 'bookmarks:toggle-bookmark'
+      editSession.setCursorBufferPosition([5, 0])
+      editor.trigger 'bookmarks:toggle-bookmark'
+
+      editor.trigger 'bookmarks:clear-bookmarks'
+
+      expect(editor.find('.bookmarked').length).toEqual 0
+      expect(displayBuffer.findMarkers(class: 'bookmark')).toHaveLength 0
+
   describe "jumping between bookmarks", ->
 
     it "doesnt die when no bookmarks", ->
