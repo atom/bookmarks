@@ -34,7 +34,7 @@ class BookmarksView extends SelectList
   populateBookmarks: ->
     bookmarks = []
     attributes = class: 'bookmark'
-    for buffer in project.getBuffers()
+    for buffer in atom.project.getBuffers()
       for marker in buffer.findMarkers(attributes)
         bookmark = {marker, buffer}
         bookmark.fitlerText = @getFilterText(bookmark)
