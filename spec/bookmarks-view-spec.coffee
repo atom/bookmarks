@@ -4,12 +4,12 @@ describe "Bookmarks package", ->
   [editor, editSession, displayBuffer] = []
 
   beforeEach ->
-    window.rootView = new RootView
-    rootView.openSync('sample.js')
-    rootView.enableKeymap()
-    atom.activatePackage('bookmarks', immediate: true)
-    rootView.attachToDom()
-    editor = rootView.getActiveView()
+    atom.rootView = new RootView
+    atom.rootView.openSync('sample.js')
+    atom.rootView.enableKeymap()
+    atom.packages.activatePackage('bookmarks', immediate: true)
+    atom.rootView.attachToDom()
+    editor = atom.rootView.getActiveView()
     editSession = editor.activeEditSession
     displayBuffer = editSession.displayBuffer
     spyOn(atom, 'beep')
@@ -156,9 +156,9 @@ describe "Bookmarks package", ->
       editSession.setCursorBufferPosition([4])
       editor.trigger 'bookmarks:toggle-bookmark'
 
-      rootView.trigger 'bookmarks:view-all'
+      atom.rootView.trigger 'bookmarks:view-all'
 
-      bookmarks = rootView.find('.bookmarks-view')
+      bookmarks = atom.rootView.find('.bookmarks-view')
       expect(bookmarks).toExist()
       expect(bookmarks.find('.bookmark').length).toBe 3
       expect(bookmarks.find('.bookmark:eq(0)').find('.primary-line').text()).toBe 'sample.js:1'
@@ -174,9 +174,9 @@ describe "Bookmarks package", ->
         editor.trigger 'bookmarks:toggle-bookmark'
         editSession.setCursorBufferPosition([0])
 
-        rootView.trigger 'bookmarks:view-all'
+        atom.rootView.trigger 'bookmarks:view-all'
 
-        bookmarks = rootView.find('.bookmarks-view')
+        bookmarks = atom.rootView.find('.bookmarks-view')
         expect(bookmarks).toExist()
         bookmarks.find('.bookmark').mousedown().mouseup()
         expect(editSession.getCursorBufferPosition()).toEqual [8, 0]
