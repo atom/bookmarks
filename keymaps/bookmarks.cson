@@ -1,6 +1,12 @@
 '.editor':
   'ctrl-f2': 'bookmarks:view-all'
-  'meta-f2': 'bookmarks:toggle-bookmark'
   'f2': 'bookmarks:jump-to-next-bookmark'
   'shift-f2': 'bookmarks:jump-to-previous-bookmark'
-  'meta-shift-f2': 'bookmarks:clear-bookmarks'
+
+'.platform-darwin .editor':
+  'cmd-f2': 'bookmarks:toggle-bookmark'
+  'cmd-shift-f2': 'bookmarks:clear-bookmarks'
+
+'.platform-win32 .editor':
+  'alt-ctrl-f2': 'bookmarks:toggle-bookmark'
+  'ctrl-shift-f2': 'bookmarks:clear-bookmarks'
