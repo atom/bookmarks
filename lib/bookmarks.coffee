@@ -5,13 +5,13 @@ class Bookmarks
   @activate: ->
     bookmarksList = null
 
-    atom.rootView.command 'bookmarks:view-all', ->
+    atom.workspaceView.command 'bookmarks:view-all', ->
       unless bookmarksList?
         BookmarksListView = require './bookmarks-view'
         bookmarksList = new BookmarksListView()
       bookmarksList.toggle()
 
-    atom.rootView.eachEditor (editor) ->
+    atom.workspaceView.eachEditor (editor) ->
       new Bookmarks(editor) if editor.attached and editor.getPane()?
 
   editor: null

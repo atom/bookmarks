@@ -1,15 +1,15 @@
-{_, RootView} = require 'atom'
+{_, WorkspaceView} = require 'atom'
 
 describe "Bookmarks package", ->
   [editor, editSession, displayBuffer] = []
 
   beforeEach ->
-    atom.rootView = new RootView
-    atom.rootView.openSync('sample.js')
-    atom.rootView.enableKeymap()
+    atom.workspaceView = new WorkspaceView
+    atom.workspaceView.openSync('sample.js')
+    atom.workspaceView.enableKeymap()
     atom.packages.activatePackage('bookmarks', immediate: true)
-    atom.rootView.attachToDom()
-    editor = atom.rootView.getActiveView()
+    atom.workspaceView.attachToDom()
+    editor = atom.workspaceView.getActiveView()
     editSession = editor.activeEditSession
     displayBuffer = editSession.displayBuffer
     spyOn(atom, 'beep')
@@ -156,9 +156,9 @@ describe "Bookmarks package", ->
       editSession.setCursorBufferPosition([4])
       editor.trigger 'bookmarks:toggle-bookmark'
 
-      atom.rootView.trigger 'bookmarks:view-all'
+      atom.workspaceView.trigger 'bookmarks:view-all'
 
-      bookmarks = atom.rootView.find('.bookmarks-view')
+      bookmarks = atom.workspaceView.find('.bookmarks-view')
       expect(bookmarks).toExist()
       expect(bookmarks.find('.bookmark').length).toBe 3
       expect(bookmarks.find('.bookmark:eq(0)').find('.primary-line').text()).toBe 'sample.js:1'
@@ -174,9 +174,9 @@ describe "Bookmarks package", ->
         editor.trigger 'bookmarks:toggle-bookmark'
         editSession.setCursorBufferPosition([0])
 
-        atom.rootView.trigger 'bookmarks:view-all'
+        atom.workspaceView.trigger 'bookmarks:view-all'
 
-        bookmarks = atom.rootView.find('.bookmarks-view')
+        bookmarks = atom.workspaceView.find('.bookmarks-view')
         expect(bookmarks).toExist()
         bookmarks.find('.bookmark').mousedown().mouseup()
         expect(editSession.getCursorBufferPosition()).toEqual [8, 0]
