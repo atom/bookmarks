@@ -10,7 +10,7 @@ describe "Bookmarks package", ->
     atom.packages.activatePackage('bookmarks', immediate: true)
     atom.workspaceView.attachToDom()
     editor = atom.workspaceView.getActiveView()
-    editSession = editor.activeEditSession
+    editSession = editor.editor
     displayBuffer = editSession.displayBuffer
     spyOn(atom, 'beep')
 

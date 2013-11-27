@@ -65,9 +65,9 @@ class BookmarksView extends SelectList
       super
 
   confirmed : (bookmark) ->
-    for editor in atom.workspaceView.getEditors()
+    for editor in atom.workspaceView.getEditorViews()
       if editor.getBuffer() is bookmark.buffer
-        editor.activeEditSession.setSelectedBufferRange(bookmark.marker.getRange(), autoscroll: true)
+        editor.setSelectedBufferRange(bookmark.marker.getRange(), autoscroll: true)
 
   attach: ->
     super

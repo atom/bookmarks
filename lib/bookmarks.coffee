@@ -11,7 +11,7 @@ class Bookmarks
         bookmarksList = new BookmarksListView()
       bookmarksList.toggle()
 
-    atom.workspaceView.eachEditor (editor) ->
+    atom.workspaceView.eachEditorView (editor) ->
       new Bookmarks(editor) if editor.attached and editor.getPane()?
 
   editor: null
@@ -68,7 +68,7 @@ class Bookmarks
     bookmarkMarker = @[getBookmarkFunction](position.row)
 
     if bookmarkMarker
-      @editor.activeEditSession.setSelectedBufferRange(bookmarkMarker.getBufferRange(), autoscroll: true)
+      @editor.setSelectedBufferRange(bookmarkMarker.getBufferRange(), autoscroll: true)
     else
       atom.beep()
 
@@ -111,4 +111,4 @@ class Bookmarks
     _.extend(attributes, class: 'bookmark', displayBufferId: @displayBuffer().id)
 
   displayBuffer: ->
-    @editor.activeEditSession.displayBuffer
+    @editor.editor.displayBuffer
