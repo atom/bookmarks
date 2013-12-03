@@ -3,17 +3,8 @@
   "version": "0.15.0",
   "main": "./lib/bookmarks",
   "description": "Can mark lines, then jump back to them",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/atom/bookmarks.git"
-  },
-  "bugs": {
-    "url": "https://github.com/atom/bookmarks/issues"
-  },
+  "repository": "https://github.com/atom/bookmarks",
   "engines": {
     "atom": "*"
-  },
-  "publishConfig": {
-    "registry": "https://atom.cloudant.com/registry/_design/app/_rewrite"
   }
 }
