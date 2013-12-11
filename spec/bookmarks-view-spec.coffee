@@ -59,6 +59,19 @@ describe "Bookmarks package", ->
       expect(editor.find('.bookmarked').length).toEqual 0
       expect(displayBuffer.findMarkers(class: 'bookmark')).toHaveLength 0
 
+  describe "when a bookmark is invalidated", ->
+    it "creates a marker when toggled", ->
+      editSession.setCursorBufferPosition([3, 10])
+      expect(displayBuffer.findMarkers(class: 'bookmark').length).toEqual 0
+
+      editor.trigger 'bookmarks:toggle-bookmark'
+      markers = displayBuffer.findMarkers(class: 'bookmark')
+      expect(markers.length).toEqual 1
+
+      editor.setText('')
+      markers = displayBuffer.findMarkers(class: 'bookmark')
+      expect(markers.length).toEqual 0
+
   describe "jumping between bookmarks", ->
 
     it "doesnt die when no bookmarks", ->
