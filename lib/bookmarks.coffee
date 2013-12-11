@@ -55,7 +55,6 @@ class Bookmarks
 
     markers = @findBookmarkMarkers()
     for marker in markers when marker.isValid()
-      console.log marker, marker.isValid()
       row = marker.getBufferRange().start.row
       @gutter.addClassToLine(row, 'bookmarked')
 
@@ -101,9 +100,10 @@ class Bookmarks
 
   createBookmarkMarker: (bufferRow) ->
     range = [[bufferRow, 0], [bufferRow, 0]]
-
-    # TODO: use the 'surround' strategy when collaboration is merged in
-    @displayBuffer().markBufferRange(range, @bookmarkMarkerAttributes(invalidate: 'surround'))
+    bookmark = @displayBuffer().markBufferRange(range, @bookmarkMarkerAttributes(invalidate: 'surround'))
+    bookmark.on 'changed', ({isValid}) ->
+      bookmark.destroy() unless isValid
+    bookmark
 
   findBookmarkMarkers: (attributes={}) ->
     @displayBuffer().findMarkers(@bookmarkMarkerAttributes(attributes))
