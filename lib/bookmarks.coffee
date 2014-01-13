@@ -1,4 +1,4 @@
-{$, _} = require 'atom'
+{_} = require 'atom'
 
 module.exports =
 class Bookmarks
