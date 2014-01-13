@@ -16,14 +16,14 @@ class Bookmarks
 
   editor: null
 
-  constructor: (@editor) ->
-    @gutter = @editor.gutter
-    @editor.on 'editor:display-updated', @renderBookmarkMarkers
+  constructor: (editorView) ->
+    {@editor, @gutter} = editorView
+    editorView.on 'editor:display-updated', @renderBookmarkMarkers
 
-    @editor.command 'bookmarks:toggle-bookmark', @toggleBookmark
-    @editor.command 'bookmarks:jump-to-next-bookmark', @jumpToNextBookmark
-    @editor.command 'bookmarks:jump-to-previous-bookmark', @jumpToPreviousBookmark
-    @editor.command 'bookmarks:clear-bookmarks', @clearBookmarks
+    editorView.command 'bookmarks:toggle-bookmark', @toggleBookmark
+    editorView.command 'bookmarks:jump-to-next-bookmark', @jumpToNextBookmark
+    editorView.command 'bookmarks:jump-to-previous-bookmark', @jumpToPreviousBookmark
+    editorView.command 'bookmarks:clear-bookmarks', @clearBookmarks
 
   toggleBookmark: =>
     cursors = @editor.getCursors()
@@ -112,4 +112,4 @@ class Bookmarks
     _.extend(attributes, class: 'bookmark', displayBufferId: @displayBuffer().id)
 
   displayBuffer: ->
-    @editor.editor.displayBuffer
+    @editor.displayBuffer
