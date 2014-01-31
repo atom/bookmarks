@@ -1,9 +1,9 @@
 path = require 'path'
 
-{$$, SelectList} = require 'atom'
+{$$, SelectListView} = require 'atom'
 
 module.exports =
-class BookmarksView extends SelectList
+class BookmarksView extends SelectListView
   @viewClass: -> "#{super} bookmarks-view overlay from-top"
 
   filterKey: 'filterText'
