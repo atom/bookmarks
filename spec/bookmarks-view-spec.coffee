@@ -7,12 +7,16 @@ describe "Bookmarks package", ->
     atom.workspaceView = new WorkspaceView
     atom.workspaceView.openSync('sample.js')
     atom.workspaceView.enableKeymap()
-    atom.packages.activatePackage('bookmarks', immediate: true)
-    atom.workspaceView.attachToDom()
-    editor = atom.workspaceView.getActiveView()
-    editSession = editor.editor
-    displayBuffer = editSession.displayBuffer
-    spyOn(atom, 'beep')
+
+    waitsForPromise ->
+      atom.packages.activatePackage('bookmarks')
+
+    runs ->
+      atom.workspaceView.attachToDom()
+      editor = atom.workspaceView.getActiveView()
+      editSession = editor.editor
+      displayBuffer = editSession.displayBuffer
+      spyOn(atom, 'beep')
 
   describe "toggling bookmarks", ->
     it "creates a marker when toggled", ->
