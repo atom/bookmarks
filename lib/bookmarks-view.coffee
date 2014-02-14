@@ -4,12 +4,12 @@ path = require 'path'
 
 module.exports =
 class BookmarksView extends SelectListView
-  @viewClass: -> "#{super} bookmarks-view overlay from-top"
-
-  filterKey: 'filterText'
-
   initialize: ->
     super
+    @addClass('bookmarks-view overlay from-top')
+
+  getFilterKey: ->
+    'filterText'
 
   toggle: ->
     if @hasParent()
@@ -39,9 +39,9 @@ class BookmarksView extends SelectListView
         bookmark = {marker, buffer}
         bookmark.fitlerText = @getFilterText(bookmark)
         bookmarks.push(bookmark)
-    @setArray(bookmarks)
+    @setItems(bookmarks)
 
-  itemForElement: (bookmark) ->
+  viewForItem: (bookmark) ->
     bookmarkRow = bookmark.marker.getStartPosition().row
     if filePath = bookmark.buffer.getPath()
       bookmarkLocation = "#{path.basename(filePath)}:#{bookmarkRow + 1}"
@@ -64,13 +64,11 @@ class BookmarksView extends SelectListView
     else
       super
 
-  confirmed : (bookmark) ->
-    for editorView in atom.workspaceView.getEditorViews()
-      if editorView.editor.getBuffer() is bookmark.buffer
-        editorView.editor.setSelectedBufferRange(bookmark.marker.getRange(), autoscroll: true)
+  confirmed: ({buffer, marker}) ->
+    for editor in atom.workspace.getEditors() when editor.getBuffer() is buffer
+      editor.setSelectedBufferRange(marker.getRange(), autoscroll: true)
 
   attach: ->
-    super
-
+    @storeFocusedElement()
     atom.workspaceView.append(this)
-    @miniEditor.focus()
+    @focusFilterEditor()

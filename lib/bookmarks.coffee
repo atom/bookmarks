@@ -60,8 +60,6 @@ class Bookmarks
 
     null
 
-  ### Internal ###
-
   jumpToBookmark: (getBookmarkFunction) =>
     cursor = @editor.getCursor()
     position = cursor.getBufferPosition()

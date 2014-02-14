@@ -1,10 +1,11 @@
-{_, WorkspaceView} = require 'atom'
+{WorkspaceView} = require 'atom'
 
 describe "Bookmarks package", ->
   [editor, editSession, displayBuffer] = []
 
   beforeEach ->
     atom.workspaceView = new WorkspaceView
+    atom.workspace = atom.workspaceView.model
     atom.workspaceView.openSync('sample.js')
     atom.workspaceView.enableKeymap()
 
