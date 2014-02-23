@@ -3,6 +3,7 @@
   "version": "0.20.0",
   "main": "./lib/bookmarks",
   "description": "Can mark lines, then jump back to them",
+  "license": "MIT",
   "repository": "https://github.com/atom/bookmarks",
   "engines": {
     "atom": "*"
