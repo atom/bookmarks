@@ -197,4 +197,6 @@ describe "Bookmarks package", ->
         bookmarks = atom.workspaceView.find('.bookmarks-view')
         expect(bookmarks).toExist()
         bookmarks.find('.bookmark').mousedown().mouseup()
-        expect(editSession.getCursorBufferPosition()).toEqual [8, 0]
+
+        waitsFor ->
+         editSession.getCursorBufferPosition().isEqual([8, 0])
