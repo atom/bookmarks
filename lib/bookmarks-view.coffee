@@ -67,6 +67,7 @@ class BookmarksView extends SelectListView
   confirmed: ({buffer, marker}) ->
     for editor in atom.workspace.getEditors() when editor.getBuffer() is buffer
       editor.setSelectedBufferRange(marker.getRange(), autoscroll: true)
+    @cancel()
 
   attach: ->
     @storeFocusedElement()
