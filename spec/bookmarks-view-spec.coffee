@@ -1,7 +1,7 @@
 {WorkspaceView} = require 'atom'
 
 describe "Bookmarks package", ->
-  [editor, editSession, displayBuffer] = []
+  [editorView, editor, displayBuffer] = []
 
   beforeEach ->
     atom.workspaceView = new WorkspaceView
@@ -14,165 +14,165 @@ describe "Bookmarks package", ->
 
     runs ->
       atom.workspaceView.attachToDom()
-      editor = atom.workspaceView.getActiveView()
-      editSession = editor.editor
-      displayBuffer = editSession.displayBuffer
+      editorView = atom.workspaceView.getActiveView()
+      {editor} = editorView
+      {displayBuffer} = editor
       spyOn(atom, 'beep')
 
   describe "toggling bookmarks", ->
     it "creates a marker when toggled", ->
-      editSession.setCursorBufferPosition([3, 10])
+      editor.setCursorBufferPosition([3, 10])
       expect(displayBuffer.findMarkers(class: 'bookmark').length).toEqual 0
 
-      editor.trigger 'bookmarks:toggle-bookmark'
+      editorView.trigger 'bookmarks:toggle-bookmark'
 
       markers = displayBuffer.findMarkers(class: 'bookmark')
       expect(markers.length).toEqual 1
       expect(markers[0].getBufferRange()).toEqual [[3, 0], [3, 0]]
 
     it "removes marker when toggled", ->
-      editSession.setCursorBufferPosition([3, 10])
+      editor.setCursorBufferPosition([3, 10])
       expect(displayBuffer.findMarkers(class: 'bookmark').length).toEqual 0
 
-      editor.trigger 'bookmarks:toggle-bookmark'
+      editorView.trigger 'bookmarks:toggle-bookmark'
       expect(displayBuffer.findMarkers(class: 'bookmark').length).toEqual 1
 
-      editor.trigger 'bookmarks:toggle-bookmark'
+      editorView.trigger 'bookmarks:toggle-bookmark'
       expect(displayBuffer.findMarkers(class: 'bookmark').length).toEqual 0
 
     it "toggles proper classes on proper gutter row", ->
-      editSession.setCursorBufferPosition([3, 10])
-      expect(editor.find('.bookmarked').length).toEqual 0
+      editor.setCursorBufferPosition([3, 10])
+      expect(editorView.find('.bookmarked').length).toEqual 0
 
-      editor.trigger 'bookmarks:toggle-bookmark'
+      editorView.trigger 'bookmarks:toggle-bookmark'
 
-      lines = editor.find('.bookmarked')
+      lines = editorView.find('.bookmarked')
       expect(lines.length).toEqual 1
       expect(lines).toHaveClass 'line-number-3'
 
-      editor.trigger 'bookmarks:toggle-bookmark'
-      expect(editor.find('.bookmarked').length).toEqual 0
+      editorView.trigger 'bookmarks:toggle-bookmark'
+      expect(editorView.find('.bookmarked').length).toEqual 0
 
     it "clears all bookmarks", ->
-      editSession.setCursorBufferPosition([3, 10])
-      editor.trigger 'bookmarks:toggle-bookmark'
-      editSession.setCursorBufferPosition([5, 0])
-      editor.trigger 'bookmarks:toggle-bookmark'
+      editor.setCursorBufferPosition([3, 10])
+      editorView.trigger 'bookmarks:toggle-bookmark'
+      editor.setCursorBufferPosition([5, 0])
+      editorView.trigger 'bookmarks:toggle-bookmark'
 
-      editor.trigger 'bookmarks:clear-bookmarks'
+      editorView.trigger 'bookmarks:clear-bookmarks'
 
-      expect(editor.find('.bookmarked').length).toEqual 0
+      expect(editorView.find('.bookmarked').length).toEqual 0
       expect(displayBuffer.findMarkers(class: 'bookmark')).toHaveLength 0
 
   describe "when a bookmark is invalidated", ->
     it "creates a marker when toggled", ->
-      editSession.setCursorBufferPosition([3, 10])
+      editor.setCursorBufferPosition([3, 10])
       expect(displayBuffer.findMarkers(class: 'bookmark').length).toEqual 0
 
-      editor.trigger 'bookmarks:toggle-bookmark'
+      editorView.trigger 'bookmarks:toggle-bookmark'
       markers = displayBuffer.findMarkers(class: 'bookmark')
       expect(markers.length).toEqual 1
 
-      editor.setText('')
+      editorView.setText('')
       markers = displayBuffer.findMarkers(class: 'bookmark')
       expect(markers.length).toEqual 0
 
   describe "jumping between bookmarks", ->
 
     it "doesnt die when no bookmarks", ->
-      editSession.setCursorBufferPosition([5, 10])
+      editor.setCursorBufferPosition([5, 10])
 
-      editor.trigger 'bookmarks:jump-to-next-bookmark'
-      expect(editSession.getCursor().getBufferPosition()).toEqual [5, 10]
+      editorView.trigger 'bookmarks:jump-to-next-bookmark'
+      expect(editor.getCursor().getBufferPosition()).toEqual [5, 10]
       expect(atom.beep.callCount).toBe 1
 
-      editor.trigger 'bookmarks:jump-to-previous-bookmark'
-      expect(editSession.getCursor().getBufferPosition()).toEqual [5, 10]
+      editorView.trigger 'bookmarks:jump-to-previous-bookmark'
+      expect(editor.getCursor().getBufferPosition()).toEqual [5, 10]
       expect(atom.beep.callCount).toBe 2
 
     describe "with one bookmark", ->
       beforeEach ->
-        editSession.setCursorBufferPosition([2, 0])
-        editor.trigger 'bookmarks:toggle-bookmark'
+        editor.setCursorBufferPosition([2, 0])
+        editorView.trigger 'bookmarks:toggle-bookmark'
 
       it "jump-to-next-bookmark jumps to the right place", ->
-        editSession.setCursorBufferPosition([0, 0])
+        editor.setCursorBufferPosition([0, 0])
 
-        editor.trigger 'bookmarks:jump-to-next-bookmark'
-        expect(editSession.getCursor().getBufferPosition()).toEqual [2, 0]
+        editorView.trigger 'bookmarks:jump-to-next-bookmark'
+        expect(editor.getCursor().getBufferPosition()).toEqual [2, 0]
 
-        editor.trigger 'bookmarks:jump-to-next-bookmark'
-        expect(editSession.getCursor().getBufferPosition()).toEqual [2, 0]
+        editorView.trigger 'bookmarks:jump-to-next-bookmark'
+        expect(editor.getCursor().getBufferPosition()).toEqual [2, 0]
 
-        editSession.setCursorBufferPosition([5, 0])
+        editor.setCursorBufferPosition([5, 0])
 
-        editor.trigger 'bookmarks:jump-to-next-bookmark'
-        expect(editSession.getCursor().getBufferPosition()).toEqual [2, 0]
+        editorView.trigger 'bookmarks:jump-to-next-bookmark'
+        expect(editor.getCursor().getBufferPosition()).toEqual [2, 0]
 
       it "jump-to-previous-bookmark jumps to the right place", ->
-        editSession.setCursorBufferPosition([0, 0])
+        editor.setCursorBufferPosition([0, 0])
 
-        editor.trigger 'bookmarks:jump-to-previous-bookmark'
-        expect(editSession.getCursor().getBufferPosition()).toEqual [2, 0]
+        editorView.trigger 'bookmarks:jump-to-previous-bookmark'
+        expect(editor.getCursor().getBufferPosition()).toEqual [2, 0]
 
-        editor.trigger 'bookmarks:jump-to-previous-bookmark'
-        expect(editSession.getCursor().getBufferPosition()).toEqual [2, 0]
+        editorView.trigger 'bookmarks:jump-to-previous-bookmark'
+        expect(editor.getCursor().getBufferPosition()).toEqual [2, 0]
 
-        editSession.setCursorBufferPosition([5, 0])
+        editor.setCursorBufferPosition([5, 0])
 
-        editor.trigger 'bookmarks:jump-to-previous-bookmark'
-        expect(editSession.getCursor().getBufferPosition()).toEqual [2, 0]
+        editorView.trigger 'bookmarks:jump-to-previous-bookmark'
+        expect(editor.getCursor().getBufferPosition()).toEqual [2, 0]
 
     describe "with bookmarks", ->
       beforeEach ->
-        editSession.setCursorBufferPosition([2, 0])
-        editor.trigger 'bookmarks:toggle-bookmark'
+        editor.setCursorBufferPosition([2, 0])
+        editorView.trigger 'bookmarks:toggle-bookmark'
 
-        editSession.setCursorBufferPosition([10, 0])
-        editor.trigger 'bookmarks:toggle-bookmark'
+        editor.setCursorBufferPosition([10, 0])
+        editorView.trigger 'bookmarks:toggle-bookmark'
 
       it "jump-to-next-bookmark finds next bookmark", ->
-        editSession.setCursorBufferPosition([0, 0])
+        editor.setCursorBufferPosition([0, 0])
 
-        editor.trigger 'bookmarks:jump-to-next-bookmark'
-        expect(editSession.getCursor().getBufferPosition()).toEqual [2, 0]
+        editorView.trigger 'bookmarks:jump-to-next-bookmark'
+        expect(editor.getCursor().getBufferPosition()).toEqual [2, 0]
 
-        editor.trigger 'bookmarks:jump-to-next-bookmark'
-        expect(editSession.getCursor().getBufferPosition()).toEqual [10, 0]
+        editorView.trigger 'bookmarks:jump-to-next-bookmark'
+        expect(editor.getCursor().getBufferPosition()).toEqual [10, 0]
 
-        editor.trigger 'bookmarks:jump-to-next-bookmark'
-        expect(editSession.getCursor().getBufferPosition()).toEqual [2, 0]
+        editorView.trigger 'bookmarks:jump-to-next-bookmark'
+        expect(editor.getCursor().getBufferPosition()).toEqual [2, 0]
 
-        editSession.setCursorBufferPosition([11, 0])
+        editor.setCursorBufferPosition([11, 0])
 
-        editor.trigger 'bookmarks:jump-to-next-bookmark'
-        expect(editSession.getCursor().getBufferPosition()).toEqual [2, 0]
+        editorView.trigger 'bookmarks:jump-to-next-bookmark'
+        expect(editor.getCursor().getBufferPosition()).toEqual [2, 0]
 
       it "jump-to-previous-bookmark finds previous bookmark", ->
-        editSession.setCursorBufferPosition([0, 0])
+        editor.setCursorBufferPosition([0, 0])
 
-        editor.trigger 'bookmarks:jump-to-previous-bookmark'
-        expect(editSession.getCursor().getBufferPosition()).toEqual [10, 0]
+        editorView.trigger 'bookmarks:jump-to-previous-bookmark'
+        expect(editor.getCursor().getBufferPosition()).toEqual [10, 0]
 
-        editor.trigger 'bookmarks:jump-to-previous-bookmark'
-        expect(editSession.getCursor().getBufferPosition()).toEqual [2, 0]
+        editorView.trigger 'bookmarks:jump-to-previous-bookmark'
+        expect(editor.getCursor().getBufferPosition()).toEqual [2, 0]
 
-        editor.trigger 'bookmarks:jump-to-previous-bookmark'
-        expect(editSession.getCursor().getBufferPosition()).toEqual [10, 0]
+        editorView.trigger 'bookmarks:jump-to-previous-bookmark'
+        expect(editor.getCursor().getBufferPosition()).toEqual [10, 0]
 
-        editSession.setCursorBufferPosition([11, 0])
+        editor.setCursorBufferPosition([11, 0])
 
-        editor.trigger 'bookmarks:jump-to-previous-bookmark'
-        expect(editSession.getCursor().getBufferPosition()).toEqual [10, 0]
+        editorView.trigger 'bookmarks:jump-to-previous-bookmark'
+        expect(editor.getCursor().getBufferPosition()).toEqual [10, 0]
 
   describe "browsing bookmarks", ->
     it "displays a select list of all bookmarks", ->
-      editSession.setCursorBufferPosition([0])
-      editor.trigger 'bookmarks:toggle-bookmark'
-      editSession.setCursorBufferPosition([2])
-      editor.trigger 'bookmarks:toggle-bookmark'
-      editSession.setCursorBufferPosition([4])
-      editor.trigger 'bookmarks:toggle-bookmark'
+      editor.setCursorBufferPosition([0])
+      editorView.trigger 'bookmarks:toggle-bookmark'
+      editor.setCursorBufferPosition([2])
+      editorView.trigger 'bookmarks:toggle-bookmark'
+      editor.setCursorBufferPosition([4])
+      editorView.trigger 'bookmarks:toggle-bookmark'
 
       atom.workspaceView.trigger 'bookmarks:view-all'
 
@@ -188,9 +188,9 @@ describe "Bookmarks package", ->
 
     describe "when a bookmark is selected", ->
       it "sets the cursor to the location the bookmark", ->
-        editSession.setCursorBufferPosition([8])
-        editor.trigger 'bookmarks:toggle-bookmark'
-        editSession.setCursorBufferPosition([0])
+        editor.setCursorBufferPosition([8])
+        editorView.trigger 'bookmarks:toggle-bookmark'
+        editor.setCursorBufferPosition([0])
 
         atom.workspaceView.trigger 'bookmarks:view-all'
 
@@ -199,4 +199,4 @@ describe "Bookmarks package", ->
         bookmarks.find('.bookmark').mousedown().mouseup()
 
         waitsFor ->
-         editSession.getCursorBufferPosition().isEqual([8, 0])
+         editor.getCursorBufferPosition().isEqual([8, 0])
