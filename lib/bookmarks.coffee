@@ -2,18 +2,6 @@ _ = require 'underscore-plus'
 
 module.exports =
 class Bookmarks
-  @activate: ->
-    bookmarksList = null
-
-    atom.workspaceView.command 'bookmarks:view-all', ->
-      unless bookmarksList?
-        BookmarksListView = require './bookmarks-view'
-        bookmarksList = new BookmarksListView()
-      bookmarksList.toggle()
-
-    atom.workspaceView.eachEditorView (editor) ->
-      new Bookmarks(editor) if editor.attached and editor.getPane()?
-
   constructor: (editorView) ->
     {@editor, @gutter} = editorView
 
