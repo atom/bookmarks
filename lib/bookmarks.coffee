@@ -1,29 +1,21 @@
 _ = require 'underscore-plus'
+{Subscriber} = require 'emissary'
 
 module.exports =
 class Bookmarks
-  @activate: ->
-    bookmarksList = null
-
-    atom.workspaceView.command 'bookmarks:view-all', ->
-      unless bookmarksList?
-        BookmarksListView = require './bookmarks-view'
-        bookmarksList = new BookmarksListView()
-      bookmarksList.toggle()
-
-    atom.workspaceView.eachEditorView (editor) ->
-      new Bookmarks(editor) if editor.attached and editor.getPane()?
-
-  editor: null
+  Subscriber.includeInto(this)
 
   constructor: (editorView) ->
     {@editor, @gutter} = editorView
-    editorView.on 'editor:display-updated', @renderBookmarkMarkers
 
-    editorView.command 'bookmarks:toggle-bookmark', @toggleBookmark
-    editorView.command 'bookmarks:jump-to-next-bookmark', @jumpToNextBookmark
-    editorView.command 'bookmarks:jump-to-previous-bookmark', @jumpToPreviousBookmark
-    editorView.command 'bookmarks:clear-bookmarks', @clearBookmarks
+    @subscribe editorView, 'editor:display-updated', @renderBookmarkMarkers
+    @subscribe @editor.getBuffer(), 'bookmarks:created bookmarks:destroyed', @renderBookmarkMarkers
+    @subscribe @editor, 'destroyed', => @unsubscribe()
+
+    @subscribeToCommand editorView, 'bookmarks:toggle-bookmark', @toggleBookmark
+    @subscribeToCommand editorView, 'bookmarks:jump-to-next-bookmark', @jumpToNextBookmark
+    @subscribeToCommand editorView, 'bookmarks:jump-to-previous-bookmark', @jumpToPreviousBookmark
+    @subscribeToCommand editorView, 'bookmarks:clear-bookmarks', @clearBookmarks
 
   toggleBookmark: =>
     cursors = @editor.getCursors()
@@ -31,10 +23,12 @@ class Bookmarks
       position = cursor.getBufferPosition()
       bookmarks = @findBookmarkMarkers(startBufferRow: position.row)
 
-      if bookmarks and bookmarks.length
+      if bookmarks?.length > 0
         bookmark.destroy() for bookmark in bookmarks
+        @editor.getBuffer().emit 'bookmarks:destroyed'
       else
-        newmark = @createBookmarkMarker(position.row)
+        @createBookmarkMarker(position.row)
+        @editor.getBuffer().emit 'bookmarks:created'
 
     @renderBookmarkMarkers()
 
@@ -99,7 +93,7 @@ class Bookmarks
   createBookmarkMarker: (bufferRow) ->
     range = [[bufferRow, 0], [bufferRow, 0]]
     bookmark = @displayBuffer().markBufferRange(range, @bookmarkMarkerAttributes(invalidate: 'surround'))
-    bookmark.on 'changed', ({isValid}) ->
+    @subscribe bookmark, 'changed', ({isValid}) ->
       bookmark.destroy() unless isValid
     bookmark
 
@@ -107,7 +101,7 @@ class Bookmarks
     @displayBuffer().findMarkers(@bookmarkMarkerAttributes(attributes))
 
   bookmarkMarkerAttributes: (attributes={}) ->
-    _.extend(attributes, class: 'bookmark', displayBufferId: @displayBuffer().id)
+    _.extend(attributes, class: 'bookmark')
 
   displayBuffer: ->
     @editor.displayBuffer
