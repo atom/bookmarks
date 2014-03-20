@@ -199,4 +199,4 @@ describe "Bookmarks package", ->
         bookmarks.find('.bookmark').mousedown().mouseup()
 
         waitsFor ->
-         editor.getCursorBufferPosition().isEqual([8, 0])
+          editor.getCursorBufferPosition().isEqual([8, 0])
