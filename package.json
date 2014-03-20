@@ -9,6 +9,7 @@
     "atom": "*"
   },
   "dependencies": {
-    "underscore-plus": "1.x"
+    "underscore-plus": "1.x",
+    "emissary": "^1.2.0"
   }
 }
