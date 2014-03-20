@@ -27,7 +27,8 @@ class Bookmarks
         bookmark.destroy() for bookmark in bookmarks
         @editor.getBuffer().emit 'bookmarks:destroyed'
       else
-        newmark = @createBookmarkMarker(position.row)
+        @createBookmarkMarker(position.row)
+        @editor.getBuffer().emit 'bookmarks:created'
 
     @renderBookmarkMarkers()
 
@@ -94,7 +95,6 @@ class Bookmarks
     bookmark = @displayBuffer().markBufferRange(range, @bookmarkMarkerAttributes(invalidate: 'surround'))
     @subscribe bookmark, 'changed', ({isValid}) ->
       bookmark.destroy() unless isValid
-    @editor.getBuffer().emit 'bookmarks:created'
     bookmark
 
   findBookmarkMarkers: (attributes={}) ->
