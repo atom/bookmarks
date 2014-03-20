@@ -18,6 +18,7 @@ class Bookmarks
     {@editor, @gutter} = editorView
 
     editorView.on 'editor:display-updated', @renderBookmarkMarkers
+    @editor.getBuffer().on 'bookmarks:created bookmarks:destroyed', @renderBookmarkMarkers
 
     editorView.command 'bookmarks:toggle-bookmark', @toggleBookmark
     editorView.command 'bookmarks:jump-to-next-bookmark', @jumpToNextBookmark
@@ -30,8 +31,9 @@ class Bookmarks
       position = cursor.getBufferPosition()
       bookmarks = @findBookmarkMarkers(startBufferRow: position.row)
 
-      if bookmarks and bookmarks.length
+      if bookmarks?.length > 0
         bookmark.destroy() for bookmark in bookmarks
+        @editor.getBuffer().emit 'bookmarks:destroyed'
       else
         newmark = @createBookmarkMarker(position.row)
 
@@ -100,13 +102,14 @@ class Bookmarks
     bookmark = @displayBuffer().markBufferRange(range, @bookmarkMarkerAttributes(invalidate: 'surround'))
     bookmark.on 'changed', ({isValid}) ->
       bookmark.destroy() unless isValid
+    @editor.getBuffer().emit 'bookmarks:created'
     bookmark
 
   findBookmarkMarkers: (attributes={}) ->
     @displayBuffer().findMarkers(@bookmarkMarkerAttributes(attributes))
 
   bookmarkMarkerAttributes: (attributes={}) ->
-    _.extend(attributes, class: 'bookmark', displayBufferId: @displayBuffer().id)
+    _.extend(attributes, class: 'bookmark')
 
   displayBuffer: ->
     @editor.displayBuffer
