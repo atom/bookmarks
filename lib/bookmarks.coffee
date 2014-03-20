@@ -14,10 +14,9 @@ class Bookmarks
     atom.workspaceView.eachEditorView (editor) ->
       new Bookmarks(editor) if editor.attached and editor.getPane()?
 
-  editor: null
-
   constructor: (editorView) ->
     {@editor, @gutter} = editorView
+
     editorView.on 'editor:display-updated', @renderBookmarkMarkers
 
     editorView.command 'bookmarks:toggle-bookmark', @toggleBookmark
