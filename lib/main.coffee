@@ -3,13 +3,13 @@ BookmarksView = null
 
 module.exports =
   activate: ->
-    bookmarksList = null
+    bookmarksView = null
 
     atom.workspaceView.command 'bookmarks:view-all', ->
       unless bookmarksList?
-        BookmarksListView ?= require './bookmarks-view'
-        bookmarksList = new BookmarksListView()
-      bookmarksList.toggle()
+        BookmarksView ?= require './bookmarks-view'
+        bookmarksView = new BookmarksView()
+      bookmarksView.toggle()
 
     atom.workspaceView.eachEditorView (editor) ->
       if editor.attached and editor.getPane()?
