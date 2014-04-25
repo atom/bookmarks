@@ -1,4 +1,4 @@
-# Bookmarks package
+# Bookmarks package [![Build Status](https://travis-ci.org/atom/bookmarks.svg?branch=master)](https://travis-ci.org/atom/bookmarks)
 
 Bookmark lines in the editor.
 
