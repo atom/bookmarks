@@ -1,4 +1,5 @@
 Bookmarks = null
+ReactBookmarks = null
 BookmarksView = null
 
 module.exports =
@@ -11,7 +12,12 @@ module.exports =
         bookmarksView = new BookmarksView()
       bookmarksView.toggle()
 
-    atom.workspaceView.eachEditorView (editor) ->
-      if editor.attached and editor.getPane()?
-        Bookmarks ?= require './bookmarks'
-        new Bookmarks(editor)
+    atom.workspaceView.eachEditorView (editorView) ->
+      if editorView.attached and editorView.getPane()?
+        if editorView.hasClass('react')
+          console.log 'Using react bookmarks'
+          ReactBookmarks ?= require './react-bookmarks'
+          new ReactBookmarks(editorView)
+        else
+          Bookmarks ?= require './bookmarks'
+          new Bookmarks(editorView)
