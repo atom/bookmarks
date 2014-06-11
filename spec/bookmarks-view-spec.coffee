@@ -4,6 +4,7 @@ describe "Bookmarks package", ->
   [editorView, editor, displayBuffer] = []
 
   beforeEach ->
+    spyOn(window, 'setImmediate').andCallFake (fn) -> fn()
     atom.workspaceView = new WorkspaceView
     atom.workspace = atom.workspaceView.model
     atom.workspaceView.openSync('sample.js')
