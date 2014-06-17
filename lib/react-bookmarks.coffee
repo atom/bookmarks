@@ -13,6 +13,8 @@ class ReactBookmarks
     @subscribeToCommand editorView, 'bookmarks:jump-to-previous-bookmark', @jumpToPreviousBookmark
     @subscribeToCommand editorView, 'bookmarks:clear-bookmarks', @clearBookmarks
 
+    @addDecorationsForBookmarks()
+
   toggleBookmark: =>
     cursors = @editor.getCursors()
     for cursor in cursors
@@ -23,6 +25,12 @@ class ReactBookmarks
         bookmark.destroy() for bookmark in bookmarks
       else
         @createBookmarkMarker(position.row)
+
+  addDecorationsForBookmarks: =>
+    for bookmark in @findBookmarkMarkers() when bookmark.isValid()
+      @editor.addDecorationForMarker(bookmark, {type: 'gutter', class: 'bookmarked'})
+
+    null
 
   clearBookmarks: =>
     bookmark.destroy() for bookmark in @findBookmarkMarkers()
