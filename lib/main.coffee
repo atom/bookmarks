@@ -15,7 +15,6 @@ module.exports =
     atom.workspaceView.eachEditorView (editorView) ->
       if editorView.attached and editorView.getPane()?
         if editorView.hasClass('react')
-          console.log 'Using react bookmarks'
           ReactBookmarks ?= require './react-bookmarks'
           new ReactBookmarks(editorView)
         else
