@@ -7,13 +7,15 @@ describe "Bookmarks package", ->
     spyOn(window, 'setImmediate').andCallFake (fn) -> fn()
     atom.workspaceView = new WorkspaceView
     atom.workspace = atom.workspaceView.model
-    atom.workspaceView.openSync('sample.js')
-    atom.workspaceView.enableKeymap()
+
+    waitsForPromise ->
+      atom.workspace.open('sample.js')
 
     waitsForPromise ->
       atom.packages.activatePackage('bookmarks')
 
     runs ->
+      atom.workspaceView.enableKeymap()
       atom.workspaceView.attachToDom()
       editorView = atom.workspaceView.getActiveView()
       {editor} = editorView
