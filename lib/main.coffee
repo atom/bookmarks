@@ -1,10 +1,17 @@
 Bookmarks = null
 ReactBookmarks = null
 BookmarksView = null
+RegexDialog = null
 
 module.exports =
   activate: ->
     bookmarksView = null
+    regexDialog = null
+
+    atom.workspaceView.command 'bookmarks:use-regex', ->
+      RegexDialog ?= require './regex-dialog'
+      regexDialog = new RegexDialog()
+      regexDialog.attach()
 
     atom.workspaceView.command 'bookmarks:view-all', ->
       unless bookmarksList?
