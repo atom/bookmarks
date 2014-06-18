@@ -4,6 +4,8 @@ BookmarksView = null
 RegexDialog = null
 
 module.exports =
+  bookmarksNavigator: null
+
   activate: ->
     bookmarksView = null
     regexDialog = null
@@ -12,6 +14,9 @@ module.exports =
       RegexDialog ?= require './regex-dialog'
       regexDialog = new RegexDialog()
       regexDialog.attach()
+
+    atom.workspaceView.command 'bookmarks:toggle-navigator', =>
+      @createNavigator().toggle()
 
     atom.workspaceView.command 'bookmarks:view-all', ->
       unless bookmarksList?
@@ -27,3 +32,9 @@ module.exports =
         else
           Bookmarks ?= require './bookmarks'
           new Bookmarks(editorView)
+
+  createNavigator: ->
+    unless @bookmarksNavigator?
+      BookmarksNavigator = require './bookmarks-navigator'
+      @bookmarksNavigator = new BookmarksNavigator()
+    @bookmarksNavigator

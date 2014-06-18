@@ -14,4 +14,10 @@
       }
     ]
   }
+  {
+    'label': 'View'
+    'submenu': [
+      { 'label': 'Toggle Bookmark Navigator', 'command': 'bookmarks:toggle-navigator' }
+    ]
+  }
 ]
