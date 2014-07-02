@@ -10,3 +10,7 @@
 '.platform-win32 .editor':
   'alt-ctrl-f2': 'bookmarks:toggle-bookmark'
   'ctrl-shift-f2': 'bookmarks:clear-bookmarks'
+
+'.platform-linux .editor':
+  'ctrl-shift-f2': 'bookmarks:toggle-bookmark'
+  'alt-shift-f2': 'bookmarks:clear-bookmarks'
