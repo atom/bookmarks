@@ -1,5 +1,6 @@
 '.editor':
   'ctrl-f2': 'bookmarks:view-all'
+  'alt-f2': 'bookmarks:use-regex'
   'f2': 'bookmarks:jump-to-next-bookmark'
   'shift-f2': 'bookmarks:jump-to-previous-bookmark'
 
