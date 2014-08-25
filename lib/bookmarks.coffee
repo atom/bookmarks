@@ -2,20 +2,18 @@ _ = require 'underscore-plus'
 {Subscriber} = require 'emissary'
 
 module.exports =
-class Bookmarks
+class ReactBookmarks
   Subscriber.includeInto(this)
 
   constructor: (editorView) ->
     {@editor, @gutter} = editorView
 
-    @subscribe editorView, 'editor:display-updated', @renderBookmarkMarkers
-    @subscribe @editor.getBuffer(), 'bookmarks:created bookmarks:destroyed', @renderBookmarkMarkers
-    @subscribe @editor, 'destroyed', => @unsubscribe()
-
     @subscribeToCommand editorView, 'bookmarks:toggle-bookmark', @toggleBookmark
     @subscribeToCommand editorView, 'bookmarks:jump-to-next-bookmark', @jumpToNextBookmark
     @subscribeToCommand editorView, 'bookmarks:jump-to-previous-bookmark', @jumpToPreviousBookmark
     @subscribeToCommand editorView, 'bookmarks:clear-bookmarks', @clearBookmarks
+
+    @addDecorationsForBookmarks()
 
   toggleBookmark: =>
     cursors = @editor.getCursors()
@@ -25,34 +23,23 @@ class Bookmarks
 
       if bookmarks?.length > 0
         bookmark.destroy() for bookmark in bookmarks
-        @editor.getBuffer().emit 'bookmarks:destroyed'
       else
         @createBookmarkMarker(position.row)
-        @editor.getBuffer().emit 'bookmarks:created'
 
-    @renderBookmarkMarkers()
+  addDecorationsForBookmarks: =>
+    for bookmark in @findBookmarkMarkers() when bookmark.isValid()
+      @editor.decorateMarker(bookmark, {type: 'gutter', class: 'bookmarked'})
+
+    null
 
   clearBookmarks: =>
     bookmark.destroy() for bookmark in @findBookmarkMarkers()
-    @renderBookmarkMarkers()
 
   jumpToNextBookmark: =>
     @jumpToBookmark('getNextBookmark')
 
   jumpToPreviousBookmark: =>
     @jumpToBookmark('getPreviousBookmark')
-
-  renderBookmarkMarkers: =>
-    return unless @gutter.isVisible()
-
-    @gutter.removeClassFromAllLines('bookmarked')
-
-    markers = @findBookmarkMarkers()
-    for marker in markers when marker.isValid()
-      row = marker.getBufferRange().start.row
-      @gutter.addClassToLine(row, 'bookmarked')
-
-    null
 
   jumpToBookmark: (getBookmarkFunction) =>
     cursor = @editor.getCursor()
@@ -95,6 +82,7 @@ class Bookmarks
     bookmark = @displayBuffer().markBufferRange(range, @bookmarkMarkerAttributes(invalidate: 'surround'))
     @subscribe bookmark, 'changed', ({isValid}) ->
       bookmark.destroy() unless isValid
+    @editor.decorateMarker(bookmark, {type: 'gutter', class: 'bookmarked'})
     bookmark
 
   findBookmarkMarkers: (attributes={}) ->
