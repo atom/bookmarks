@@ -1,11 +1,13 @@
 @import "octicon-utf-codes.less";
 
-.editor .gutter .line-number.bookmarked .icon-right {
-  visibility: visible;
+.editor, atom-text-editor::shadow {
+  .gutter .line-number.bookmarked .icon-right {
+    visibility: visible;
 
-  &:before {
-    content: @bookmark;
-    color: #09C;
+    &:before {
+      content: @bookmark;
+      color: #09C;
+    }
   }
 }
 
