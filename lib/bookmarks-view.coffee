@@ -1,6 +1,6 @@
 path = require 'path'
 
-{$$, SelectListView} = require 'atom'
+{$$, SelectListView} = require 'atom-space-pen-views'
 
 module.exports =
 class BookmarksView extends SelectListView
@@ -71,5 +71,5 @@ class BookmarksView extends SelectListView
 
   attach: ->
     @storeFocusedElement()
-    atom.workspaceView.append(this)
+    atom.views.getView(atom.workspace).appendChild(@element)
     @focusFilterEditor()
