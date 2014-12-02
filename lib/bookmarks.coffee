@@ -44,7 +44,7 @@ class ReactBookmarks
     @jumpToBookmark('getPreviousBookmark')
 
   jumpToBookmark: (getBookmarkFunction) =>
-    cursor = @editor.getCursor()
+    cursor = @editor.getLastCursor()
     position = cursor.getBufferPosition()
     bookmarkMarker = @[getBookmarkFunction](position.row)
 

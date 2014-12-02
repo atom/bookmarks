@@ -83,11 +83,11 @@ describe "Bookmarks package", ->
       editor.setCursorBufferPosition([5, 10])
 
       atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
-      expect(editor.getCursor().getBufferPosition()).toEqual [5, 10]
+      expect(editor.getLastCursor().getBufferPosition()).toEqual [5, 10]
       expect(atom.beep.callCount).toBe 1
 
       atom.commands.dispatch editorElement, 'bookmarks:jump-to-previous-bookmark'
-      expect(editor.getCursor().getBufferPosition()).toEqual [5, 10]
+      expect(editor.getLastCursor().getBufferPosition()).toEqual [5, 10]
       expect(atom.beep.callCount).toBe 2
 
     describe "with one bookmark", ->
@@ -99,29 +99,29 @@ describe "Bookmarks package", ->
         editor.setCursorBufferPosition([0, 0])
 
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
-        expect(editor.getCursor().getBufferPosition()).toEqual [2, 0]
+        expect(editor.getLastCursor().getBufferPosition()).toEqual [2, 0]
 
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
-        expect(editor.getCursor().getBufferPosition()).toEqual [2, 0]
+        expect(editor.getLastCursor().getBufferPosition()).toEqual [2, 0]
 
         editor.setCursorBufferPosition([5, 0])
 
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
-        expect(editor.getCursor().getBufferPosition()).toEqual [2, 0]
+        expect(editor.getLastCursor().getBufferPosition()).toEqual [2, 0]
 
       it "jump-to-previous-bookmark jumps to the right place", ->
         editor.setCursorBufferPosition([0, 0])
 
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-previous-bookmark'
-        expect(editor.getCursor().getBufferPosition()).toEqual [2, 0]
+        expect(editor.getLastCursor().getBufferPosition()).toEqual [2, 0]
 
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-previous-bookmark'
-        expect(editor.getCursor().getBufferPosition()).toEqual [2, 0]
+        expect(editor.getLastCursor().getBufferPosition()).toEqual [2, 0]
 
         editor.setCursorBufferPosition([5, 0])
 
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-previous-bookmark'
-        expect(editor.getCursor().getBufferPosition()).toEqual [2, 0]
+        expect(editor.getLastCursor().getBufferPosition()).toEqual [2, 0]
 
     describe "with bookmarks", ->
       beforeEach ->
@@ -135,35 +135,35 @@ describe "Bookmarks package", ->
         editor.setCursorBufferPosition([0, 0])
 
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
-        expect(editor.getCursor().getBufferPosition()).toEqual [2, 0]
+        expect(editor.getLastCursor().getBufferPosition()).toEqual [2, 0]
 
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
-        expect(editor.getCursor().getBufferPosition()).toEqual [10, 0]
+        expect(editor.getLastCursor().getBufferPosition()).toEqual [10, 0]
 
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
-        expect(editor.getCursor().getBufferPosition()).toEqual [2, 0]
+        expect(editor.getLastCursor().getBufferPosition()).toEqual [2, 0]
 
         editor.setCursorBufferPosition([11, 0])
 
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
-        expect(editor.getCursor().getBufferPosition()).toEqual [2, 0]
+        expect(editor.getLastCursor().getBufferPosition()).toEqual [2, 0]
 
       it "jump-to-previous-bookmark finds previous bookmark", ->
         editor.setCursorBufferPosition([0, 0])
 
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-previous-bookmark'
-        expect(editor.getCursor().getBufferPosition()).toEqual [10, 0]
+        expect(editor.getLastCursor().getBufferPosition()).toEqual [10, 0]
 
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-previous-bookmark'
-        expect(editor.getCursor().getBufferPosition()).toEqual [2, 0]
+        expect(editor.getLastCursor().getBufferPosition()).toEqual [2, 0]
 
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-previous-bookmark'
-        expect(editor.getCursor().getBufferPosition()).toEqual [10, 0]
+        expect(editor.getLastCursor().getBufferPosition()).toEqual [10, 0]
 
         editor.setCursorBufferPosition([11, 0])
 
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-previous-bookmark'
-        expect(editor.getCursor().getBufferPosition()).toEqual [10, 0]
+        expect(editor.getLastCursor().getBufferPosition()).toEqual [10, 0]
 
   describe "browsing bookmarks", ->
     it "displays a select list of all bookmarks", ->
