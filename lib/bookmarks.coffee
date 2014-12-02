@@ -5,15 +5,17 @@ module.exports =
 class ReactBookmarks
   Subscriber.includeInto(this)
 
-  constructor: (editorView) ->
-    {@editor, @gutter} = editorView
-
-    @subscribeToCommand editorView, 'bookmarks:toggle-bookmark', @toggleBookmark
-    @subscribeToCommand editorView, 'bookmarks:jump-to-next-bookmark', @jumpToNextBookmark
-    @subscribeToCommand editorView, 'bookmarks:jump-to-previous-bookmark', @jumpToPreviousBookmark
-    @subscribeToCommand editorView, 'bookmarks:clear-bookmarks', @clearBookmarks
+  constructor: (@editor) ->
+    @subscribe atom.commands.add atom.views.getView(@editor),
+      'bookmarks:toggle-bookmark': @toggleBookmark
+      'bookmarks:jump-to-next-bookmark': @jumpToNextBookmark
+      'bookmarks:jump-to-previous-bookmark': @jumpToPreviousBookmark
+      'bookmarks:clear-bookmarks': @clearBookmarks
 
     @addDecorationsForBookmarks()
+
+  destroy: ->
+    @commandsDisposable.destroy()
 
   toggleBookmark: =>
     cursors = @editor.getCursors()
@@ -42,7 +44,7 @@ class ReactBookmarks
     @jumpToBookmark('getPreviousBookmark')
 
   jumpToBookmark: (getBookmarkFunction) =>
-    cursor = @editor.getCursor()
+    cursor = @editor.getLastCursor()
     position = cursor.getBufferPosition()
     bookmarkMarker = @[getBookmarkFunction](position.row)
 
@@ -80,7 +82,7 @@ class ReactBookmarks
   createBookmarkMarker: (bufferRow) ->
     range = [[bufferRow, 0], [bufferRow, 0]]
     bookmark = @displayBuffer().markBufferRange(range, @bookmarkMarkerAttributes(invalidate: 'surround'))
-    @subscribe bookmark, 'changed', ({isValid}) ->
+    @subscribe bookmark.onDidChange ({isValid}) ->
       bookmark.destroy() unless isValid
     @editor.decorateMarker(bookmark, {type: 'gutter', class: 'bookmarked'})
     bookmark

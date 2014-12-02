@@ -1,22 +1,36 @@
 path = require 'path'
 
-{$$, SelectListView} = require 'atom'
+{$$, SelectListView} = require 'atom-space-pen-views'
 
 module.exports =
 class BookmarksView extends SelectListView
   initialize: ->
     super
-    @addClass('bookmarks-view overlay from-top')
+    @addClass('bookmarks-view')
 
   getFilterKey: ->
     'filterText'
 
+  attached: ->
+    @focusFilterEditor()
+
+  show: ->
+    @storeFocusedElement()
+    @panel ?= atom.workspace.addModalPanel(item: this)
+    @panel.show()
+
+  hide: ->
+    @panel.hide()
+
+  cancelled: ->
+    @hide()
+
   toggle: ->
-    if @hasParent()
-      @cancel()
+    if @isVisible()
+      @hide()
     else
       @populateBookmarks()
-      @attach()
+      @show()
 
   getFilterText: (bookmark) ->
     segments = []
@@ -68,8 +82,3 @@ class BookmarksView extends SelectListView
     atom.workspace.open(buffer.getPath()).done (editor) ->
       editor.setSelectedBufferRange?(marker.getRange(), autoscroll: true)
     @cancel()
-
-  attach: ->
-    @storeFocusedElement()
-    atom.workspaceView.append(this)
-    @focusFilterEditor()

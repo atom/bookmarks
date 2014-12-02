@@ -9,7 +9,8 @@
     "atom": "*"
   },
   "dependencies": {
-    "underscore-plus": "1.x",
-    "emissary": "^1.2.0"
+    "atom-space-pen-views": "^0.20.0",
+    "emissary": "^1.2.0",
+    "underscore-plus": "1.x"
   }
 }
