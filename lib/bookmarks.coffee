@@ -82,7 +82,7 @@ class ReactBookmarks
   createBookmarkMarker: (bufferRow) ->
     range = [[bufferRow, 0], [bufferRow, 0]]
     bookmark = @displayBuffer().markBufferRange(range, @bookmarkMarkerAttributes(invalidate: 'surround'))
-    @subscribe bookmark, 'changed', ({isValid}) ->
+    @subscribe bookmark.onDidChange ({isValid}) ->
       bookmark.destroy() unless isValid
     @editor.decorateMarker(bookmark, {type: 'gutter', class: 'bookmarked'})
     bookmark
