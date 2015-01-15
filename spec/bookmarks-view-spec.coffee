@@ -196,7 +196,6 @@ describe "Bookmarks package", ->
 
         bookmarks = $(workspaceElement).find('.bookmarks-view')
         expect(bookmarks).toExist()
-        debugger
         bookmarks.find('.bookmark').mousedown().mouseup()
 
         waitsFor ->
