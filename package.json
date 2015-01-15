@@ -1,6 +1,6 @@
 {
   "name": "bookmarks",
-  "version": "0.33.0",
+  "version": "0.34.0",
   "main": "./lib/main",
   "description": "Can mark lines, then jump back to them",
   "license": "MIT",
