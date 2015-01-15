@@ -30,7 +30,7 @@ class ReactBookmarks
 
   addDecorationsForBookmarks: =>
     for bookmark in @findBookmarkMarkers() when bookmark.isValid()
-      @editor.decorateMarker(bookmark, {type: 'gutter', class: 'bookmarked'})
+      @editor.decorateMarker(bookmark, {type: 'line-number', class: 'bookmarked'})
 
     null
 
@@ -84,7 +84,7 @@ class ReactBookmarks
     bookmark = @displayBuffer().markBufferRange(range, @bookmarkMarkerAttributes(invalidate: 'surround'))
     @subscribe bookmark.onDidChange ({isValid}) ->
       bookmark.destroy() unless isValid
-    @editor.decorateMarker(bookmark, {type: 'gutter', class: 'bookmarked'})
+    @editor.decorateMarker(bookmark, {type: 'line-number', class: 'bookmarked'})
     bookmark
 
   findBookmarkMarkers: (attributes={}) ->
