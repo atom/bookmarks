@@ -56,7 +56,7 @@ class ReactBookmarks
   getPreviousBookmark: (bufferRow) ->
     markers = @findBookmarkMarkers()
     return null unless markers.length
-    return markers[0] if markers.length == 1
+    return markers[0] if markers.length is 1
 
     bookmarkIndex = _.sortedIndex markers, bufferRow, (marker) ->
       if marker.getBufferRange then marker.getBufferRange().start.row else marker
@@ -69,12 +69,12 @@ class ReactBookmarks
   getNextBookmark: (bufferRow) ->
     markers = @findBookmarkMarkers()
     return null unless markers.length
-    return markers[0] if markers.length == 1
+    return markers[0] if markers.length is 1
 
     bookmarkIndex = _.sortedIndex markers, bufferRow, (marker) ->
       if marker.getBufferRange then marker.getBufferRange().start.row else marker
 
-    bookmarkIndex++ if markers[bookmarkIndex] and markers[bookmarkIndex].getBufferRange().start.row == bufferRow
+    bookmarkIndex++ if markers[bookmarkIndex] and markers[bookmarkIndex].getBufferRange().start.row is bufferRow
     bookmarkIndex = 0 if bookmarkIndex >= markers.length
 
     markers[bookmarkIndex]
