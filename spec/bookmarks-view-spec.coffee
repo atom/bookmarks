@@ -211,7 +211,8 @@ describe "Bookmarks package", ->
         expect(atom.workspace.getActivePane()).not.toEqual pane1
 
         atom.commands.dispatch workspaceElement, 'bookmarks:view-all'
-        $(workspaceElement).find('.bookmarks-view .bookmark').mousedown().mouseup()
+        bookmarkElement = workspaceElement.querySelector('.bookmarks-view .bookmark')
+        atom.commands.dispatch bookmarkElement, 'core:confirm'
 
         waitsFor ->
           atom.workspace.getActivePane() is pane1
