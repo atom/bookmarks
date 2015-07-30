@@ -79,6 +79,6 @@ class BookmarksView extends SelectListView
       super
 
   confirmed: ({buffer, marker}) ->
-    atom.workspace.open(buffer.getPath()).done (editor) ->
+    atom.workspace.open(buffer.getPath(), searchAllPanes: true).done (editor) ->
       editor.setSelectedBufferRange?(marker.getRange(), autoscroll: true)
     @cancel()

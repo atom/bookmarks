@@ -200,3 +200,23 @@ describe "Bookmarks package", ->
 
         waitsFor ->
           editor.getCursorBufferPosition().isEqual([8, 0])
+
+      it "searches the bookmark among all panes", ->
+        editor.setCursorBufferPosition([8])
+        atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
+        editor.setCursorBufferPosition([0])
+
+        pane1 = atom.workspace.getActivePane()
+        pane1.splitRight()
+        expect(atom.workspace.getActivePane()).not.toEqual pane1
+
+        atom.commands.dispatch workspaceElement, 'bookmarks:view-all'
+        bookmarkElement = workspaceElement.querySelector('.bookmarks-view .bookmark')
+        atom.commands.dispatch bookmarkElement, 'core:confirm'
+
+        waitsFor ->
+          atom.workspace.getActivePane() is pane1
+
+        runs ->
+          expect(atom.workspace.getActiveTextEditor()).toEqual editor
+          expect(editor.getCursorBufferPosition()).toEqual [8, 0]
