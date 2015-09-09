@@ -48,7 +48,7 @@ describe "Bookmarks package", ->
 
       lines = editorElement.shadowRoot.querySelectorAll('.bookmarked')
       expect(lines.length).toEqual 1
-      expect(lines[0]).toHaveClass 'line-number-3'
+      expect(lines[0]).toHaveData("buffer-row", 3)
 
       atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
       expect(editorElement.shadowRoot.querySelectorAll('.bookmarked').length).toBe 0
