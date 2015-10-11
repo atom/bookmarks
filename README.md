@@ -4,7 +4,6 @@ Bookmark lines in the editor.
 
 ### Keybindings
 
-
 #### Mac
 
 * `cmd-f2` to add/remove a bookmark on the current line
@@ -29,4 +28,4 @@ Bookmark lines in the editor.
 * `f2` to move the cursor to the next bookmark
 * `shift-f2` to move the cursor to the previous bookmark.
 
-![](https://cloud.githubusercontent.com/assets/1545996/10418088/c6835598-7016-11e5-82a5-e9e653b639d0.png)
+![atom-bookmarks-readme](https://cloud.githubusercontent.com/assets/1545996/10419203/97d75e32-7035-11e5-818f-5b34d60865c1.png)
