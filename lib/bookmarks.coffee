@@ -20,13 +20,13 @@ class ReactBookmarks
   toggleBookmark: =>
     cursors = @editor.getCursors()
     for cursor in cursors
-      position = cursor.getBufferPosition()
-      bookmarks = @findBookmarkMarkers(startBufferRow: position.row)
+      range = @editor.getSelectedBufferRange()
+      bookmarks = @findBookmarkMarkers(intersectsBufferRowRange: [range.start.row, range.end.row])
 
       if bookmarks?.length > 0
         bookmark.destroy() for bookmark in bookmarks
       else
-        @createBookmarkMarker(position.row)
+        @createBookmarkMarker(range)
 
   addDecorationsForBookmarks: =>
     for bookmark in @findBookmarkMarkers() when bookmark.isValid()
@@ -45,7 +45,7 @@ class ReactBookmarks
 
   jumpToBookmark: (getBookmarkFunction) =>
     cursor = @editor.getLastCursor()
-    position = cursor.getBufferPosition()
+    position = cursor.getMarker().getStartBufferPosition()
     bookmarkMarker = @[getBookmarkFunction](position.row)
 
     if bookmarkMarker
@@ -79,8 +79,7 @@ class ReactBookmarks
 
     markers[bookmarkIndex]
 
-  createBookmarkMarker: (bufferRow) ->
-    range = [[bufferRow, 0], [bufferRow, 0]]
+  createBookmarkMarker: (range) ->
     bookmark = @displayBuffer().markBufferRange(range, @bookmarkMarkerAttributes(invalidate: 'surround'))
     @subscribe bookmark.onDidChange ({isValid}) ->
       bookmark.destroy() unless isValid
