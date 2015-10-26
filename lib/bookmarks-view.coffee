@@ -56,13 +56,13 @@ class BookmarksView extends SelectListView
     @setItems(bookmarks)
 
   viewForItem: (bookmark) ->
-    bookmarkRow = bookmark.marker.getStartPosition().row
+    bookmarkStartRow = bookmark.marker.getStartPosition().row
     bookmarkEndRow = bookmark.marker.getEndPosition().row
     if filePath = bookmark.buffer.getPath()
-      bookmarkLocation = "#{path.basename(filePath)}:#{bookmarkRow + 1}"
+      bookmarkLocation = "#{path.basename(filePath)}:#{bookmarkStartRow + 1}"
     else
-      bookmarkLocation = "untitled:#{bookmarkRow + 1}"
-    if bookmarkRow isnt bookmarkEndRow
+      bookmarkLocation = "untitled:#{bookmarkStartRow + 1}"
+    if bookmarkStartRow isnt bookmarkEndRow
       bookmarkLocation += "-#{bookmarkEndRow + 1}"
     lineText = @getLineText(bookmark)
 
