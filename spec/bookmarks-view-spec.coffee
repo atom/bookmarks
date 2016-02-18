@@ -204,7 +204,7 @@ describe "Bookmarks package", ->
         editor.setCursorBufferPosition([2, 0])
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
 
-        editor.setSelectedBufferRanges([[[8, 4], [10, 2]]])
+        editor.setSelectedBufferRanges([[[8, 4], [10, 0]]])
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
 
       it "jump-to-next-bookmark finds next bookmark", ->
