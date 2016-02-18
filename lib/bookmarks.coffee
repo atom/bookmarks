@@ -49,7 +49,8 @@ class ReactBookmarks
     bookmarkMarker = @[getBookmarkFunction](position.row)
 
     if bookmarkMarker
-      @editor.setSelectedBufferRange(bookmarkMarker.getBufferRange(), autoscroll: true)
+      @editor.setSelectedBufferRange(bookmarkMarker.getBufferRange(), autoscroll: false)
+      @editor.scrollToCursorPosition()
     else
       atom.beep()
 

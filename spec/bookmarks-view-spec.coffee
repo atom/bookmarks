@@ -1,7 +1,7 @@
 {$} = require 'atom-space-pen-views'
 
 describe "Bookmarks package", ->
-  [workspaceElement, editorElement, editor, editor] = []
+  [workspaceElement, editorElement, editor] = []
 
   beforeEach ->
     spyOn(window, 'setImmediate').andCallFake (fn) -> fn()
