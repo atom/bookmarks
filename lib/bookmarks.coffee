@@ -81,17 +81,14 @@ class ReactBookmarks
     markers[bookmarkIndex]
 
   createBookmarkMarker: (range) ->
-    bookmark = @displayBuffer().markBufferRange(range, @bookmarkMarkerAttributes(invalidate: 'surround'))
+    bookmark = @editor.markBufferRange(range, @bookmarkMarkerAttributes(invalidate: 'surround'))
     @subscribe bookmark.onDidChange ({isValid}) ->
       bookmark.destroy() unless isValid
     @editor.decorateMarker(bookmark, {type: 'line-number', class: 'bookmarked'})
     bookmark
 
   findBookmarkMarkers: (attributes={}) ->
-    @displayBuffer().findMarkers(@bookmarkMarkerAttributes(attributes))
+    @editor.findMarkers(@bookmarkMarkerAttributes(attributes))
 
   bookmarkMarkerAttributes: (attributes={}) ->
     _.extend(attributes, class: 'bookmark')
-
-  displayBuffer: ->
-    @editor.displayBuffer
