@@ -1,12 +1,11 @@
 _ = require 'underscore-plus'
-{Subscriber} = require 'emissary'
+{CompositeDisposable} = require 'atom'
 
 module.exports =
 class ReactBookmarks
-  Subscriber.includeInto(this)
-
   constructor: (@editor) ->
-    @subscribe atom.commands.add atom.views.getView(@editor),
+    @disposables = new CompositeDisposable
+    @disposables.add atom.commands.add atom.views.getView(@editor),
       'bookmarks:toggle-bookmark': @toggleBookmark
       'bookmarks:jump-to-next-bookmark': @jumpToNextBookmark
       'bookmarks:jump-to-previous-bookmark': @jumpToPreviousBookmark
@@ -15,7 +14,7 @@ class ReactBookmarks
     @addDecorationsForBookmarks()
 
   destroy: ->
-    @commandsDisposable.destroy()
+    @disposables.dispose()
 
   toggleBookmark: =>
     cursors = @editor.getCursors()
@@ -82,9 +81,8 @@ class ReactBookmarks
 
   createBookmarkMarker: (range) ->
     bookmark = @editor.markBufferRange(range, @bookmarkMarkerAttributes(invalidate: 'surround'))
-    @subscribe bookmark.onDidChange ({isValid}) ->
-      bookmark.destroy() unless isValid
     @editor.decorateMarker(bookmark, {type: 'line-number', class: 'bookmarked'})
+    @disposables.add bookmark.onDidChange ({isValid}) -> bookmark.destroy() unless isValid
     bookmark
 
   findBookmarkMarkers: (attributes={}) ->
