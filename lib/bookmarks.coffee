@@ -11,7 +11,9 @@ class ReactBookmarks
       'bookmarks:jump-to-previous-bookmark': @jumpToPreviousBookmark
       'bookmarks:clear-bookmarks': @clearBookmarks
 
-    @addDecorationsForBookmarks()
+    @markerLayer = @editor.addMarkerLayer({maintainHistory: true})
+    @editor.decorateMarkerLayer(@markerLayer, {type: 'line-number', class: 'bookmarked'})
+    @disposables.add @editor.onDidDestroy(@destroy.bind(this))
 
   destroy: ->
     @disposables.dispose()
@@ -20,21 +22,15 @@ class ReactBookmarks
     cursors = @editor.getCursors()
     for cursor in cursors
       range = @editor.getSelectedBufferRange()
-      bookmarks = @findBookmarkMarkers(intersectsBufferRowRange: [range.start.row, range.end.row])
+      bookmarks = @markerLayer.findMarkers(intersectsBufferRowRange: [range.start.row, range.end.row])
 
       if bookmarks?.length > 0
         bookmark.destroy() for bookmark in bookmarks
       else
         @createBookmarkMarker(range)
 
-  addDecorationsForBookmarks: =>
-    for bookmark in @findBookmarkMarkers() when bookmark.isValid()
-      @editor.decorateMarker(bookmark, {type: 'line-number', class: 'bookmarked'})
-
-    null
-
   clearBookmarks: =>
-    bookmark.destroy() for bookmark in @findBookmarkMarkers()
+    bookmark.destroy() for bookmark in @markerLayer.getMarkers()
 
   jumpToNextBookmark: =>
     @jumpToBookmark('getNextBookmark')
@@ -54,7 +50,7 @@ class ReactBookmarks
       atom.beep()
 
   getPreviousBookmark: (bufferRow) ->
-    markers = @findBookmarkMarkers()
+    markers = @markerLayer.getMarkers()
     return null unless markers.length
     return markers[0] if markers.length is 1
 
@@ -67,7 +63,7 @@ class ReactBookmarks
     markers[bookmarkIndex]
 
   getNextBookmark: (bufferRow) ->
-    markers = @findBookmarkMarkers()
+    markers = @markerLayer.getMarkers()
     return null unless markers.length
     return markers[0] if markers.length is 1
 
@@ -80,13 +76,6 @@ class ReactBookmarks
     markers[bookmarkIndex]
 
   createBookmarkMarker: (range) ->
-    bookmark = @editor.markBufferRange(range, @bookmarkMarkerAttributes(invalidate: 'surround'))
-    @editor.decorateMarker(bookmark, {type: 'line-number', class: 'bookmarked'})
+    bookmark = @markerLayer.markBufferRange(range, {invalidate: 'surround'})
     @disposables.add bookmark.onDidChange ({isValid}) -> bookmark.destroy() unless isValid
     bookmark
-
-  findBookmarkMarkers: (attributes={}) ->
-    @editor.findMarkers(@bookmarkMarkerAttributes(attributes))
-
-  bookmarkMarkerAttributes: (attributes={}) ->
-    _.extend(attributes, class: 'bookmark')
