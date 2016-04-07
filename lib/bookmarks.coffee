@@ -11,7 +11,7 @@ class ReactBookmarks
       'bookmarks:jump-to-previous-bookmark': @jumpToPreviousBookmark
       'bookmarks:clear-bookmarks': @clearBookmarks
 
-    @markerLayer = @editor.addMarkerLayer({maintainHistory: true})
+    @markerLayer = @editor.addMarkerLayer()
     @editor.decorateMarkerLayer(@markerLayer, {type: 'line-number', class: 'bookmarked'})
     @disposables.add @editor.onDidDestroy(@destroy.bind(this))
 
