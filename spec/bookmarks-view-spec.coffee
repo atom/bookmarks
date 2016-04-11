@@ -1,7 +1,13 @@
 {$} = require 'atom-space-pen-views'
+{values} = require 'underscore-plus'
 
 describe "Bookmarks package", ->
   [workspaceElement, editorElement, editor] = []
+
+  bookmarkedRangesForEditor = (editor) ->
+    values(editor.decorationsStateForScreenRowRange(0, editor.getLastScreenRow()))
+      .filter (decoration) -> decoration.properties.class is 'bookmarked'
+      .map (decoration) -> decoration.screenRange
 
   beforeEach ->
     spyOn(window, 'setImmediate').andCallFake (fn) -> fn()
@@ -23,135 +29,139 @@ describe "Bookmarks package", ->
     describe "point marker bookmark", ->
       it "creates a marker when toggled", ->
         editor.setCursorBufferPosition([3, 10])
-        expect(editor.findMarkers(class: 'bookmark').length).toEqual 0
-
+        expect(bookmarkedRangesForEditor(editor)).toEqual []
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
-
-        markers = editor.findMarkers(class: 'bookmark')
-        expect(markers.length).toEqual 1
-        expect(markers[0].getBufferRange()).toEqual [[3, 10], [3, 10]]
+        expect(bookmarkedRangesForEditor(editor)).toEqual [[[3, 10], [3, 10]]]
 
       it "removes marker when toggled", ->
         editor.setCursorBufferPosition([3, 10])
-        expect(editor.findMarkers(class: 'bookmark').length).toEqual 0
+        expect(bookmarkedRangesForEditor(editor).length).toBe 0
 
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
-        expect(editor.findMarkers(class: 'bookmark').length).toEqual 1
+        expect(bookmarkedRangesForEditor(editor).length).toBe 1
 
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
-        expect(editor.findMarkers(class: 'bookmark').length).toEqual 0
+        expect(bookmarkedRangesForEditor(editor).length).toBe 0
 
     describe "single line range marker bookmark", ->
       it "created a marker when toggled", ->
         editor.setSelectedBufferRanges([[[3, 5], [3, 10]]])
-        expect(editor.findMarkers(class: 'bookmark').length).toEqual 0
+        expect(bookmarkedRangesForEditor(editor)).toEqual []
 
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
 
-        markers = editor.findMarkers(class: 'bookmark')
-        expect(markers.length).toEqual 1
-        expect(markers[0].getBufferRange()).toEqual [[3, 5], [3, 10]]
+        expect(bookmarkedRangesForEditor(editor)).toEqual [[[3, 5], [3, 10]]]
 
       it "removes marker when toggled", ->
         editor.setSelectedBufferRanges([[[3, 5], [3, 10]]])
-        expect(editor.findMarkers(class: 'bookmark').length).toEqual 0
+        expect(bookmarkedRangesForEditor(editor).length).toBe 0
 
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
-        expect(editor.findMarkers(class: 'bookmark').length).toEqual 1
+        expect(bookmarkedRangesForEditor(editor).length).toBe 1
 
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
-        expect(editor.findMarkers(class: 'bookmark').length).toEqual 0
+        expect(bookmarkedRangesForEditor(editor).length).toBe 0
 
     describe "multi line range marker bookmark", ->
       it "created a marker when toggled", ->
         editor.setSelectedBufferRanges([[[1, 5], [3, 10]]])
-        expect(editor.findMarkers(class: 'bookmark').length).toEqual 0
+        expect(bookmarkedRangesForEditor(editor)).toEqual []
 
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
 
-        markers = editor.findMarkers(class: 'bookmark')
-        expect(markers.length).toEqual 1
-        expect(markers[0].getBufferRange()).toEqual [[1, 5], [3, 10]]
+        expect(bookmarkedRangesForEditor(editor)).toEqual [[[1, 5], [3, 10]]]
 
       it "removes marker when toggled", ->
         editor.setSelectedBufferRanges([[[1, 5], [3, 10]]])
-        expect(editor.findMarkers(class: 'bookmark').length).toEqual 0
+        expect(bookmarkedRangesForEditor(editor).length).toBe 0
 
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
-        expect(editor.findMarkers(class: 'bookmark').length).toEqual 1
+        expect(bookmarkedRangesForEditor(editor).length).toBe 1
 
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
-        expect(editor.findMarkers(class: 'bookmark').length).toEqual 0
+        expect(bookmarkedRangesForEditor(editor).length).toBe 0
 
       it "removes marker when toggled inside bookmark", ->
         editor.setSelectedBufferRanges([[[1, 5], [3, 10]]])
-        expect(editor.findMarkers(class: 'bookmark').length).toEqual 0
+        expect(bookmarkedRangesForEditor(editor).length).toBe 0
 
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
-        expect(editor.findMarkers(class: 'bookmark').length).toEqual 1
+        expect(bookmarkedRangesForEditor(editor).length).toBe 1
 
         editor.setCursorBufferPosition([2, 2])
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
-        expect(editor.findMarkers(class: 'bookmark').length).toEqual 0
+        expect(bookmarkedRangesForEditor(editor).length).toBe 0
 
       it "removes marker when toggled outside bookmark on start row", ->
         editor.setSelectedBufferRanges([[[1, 5], [3, 10]]])
-        expect(editor.findMarkers(class: 'bookmark').length).toEqual 0
+        expect(bookmarkedRangesForEditor(editor).length).toBe 0
 
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
-        expect(editor.findMarkers(class: 'bookmark').length).toEqual 1
+        expect(bookmarkedRangesForEditor(editor).length).toBe 1
 
         editor.setCursorBufferPosition([1, 2])
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
-        expect(editor.findMarkers(class: 'bookmark').length).toEqual 0
+        expect(bookmarkedRangesForEditor(editor).length).toBe 0
 
       it "removes marker when toggled outside bookmark on end row", ->
         editor.setSelectedBufferRanges([[[1, 5], [3, 8]]])
-        expect(editor.findMarkers(class: 'bookmark').length).toEqual 0
+        expect(bookmarkedRangesForEditor(editor).length).toBe 0
 
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
-        expect(editor.findMarkers(class: 'bookmark').length).toEqual 1
+        expect(bookmarkedRangesForEditor(editor).length).toBe 1
 
         editor.setCursorBufferPosition([3, 10])
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
-        expect(editor.findMarkers(class: 'bookmark').length).toEqual 0
+        expect(bookmarkedRangesForEditor(editor).length).toBe 0
 
     it "toggles proper classes on proper gutter row", ->
       editor.setCursorBufferPosition([3, 10])
       expect(editorElement.shadowRoot.querySelectorAll('.bookmarked').length).toBe 0
 
       atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
+      lines = []
 
-      lines = editorElement.shadowRoot.querySelectorAll('.bookmarked')
-      expect(lines.length).toEqual 1
-      expect(lines[0]).toHaveData("buffer-row", 3)
+      waitsFor ->
+        lines = editorElement.shadowRoot.querySelectorAll('.bookmarked')
+        lines.length is 1
 
-      atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
-      expect(editorElement.shadowRoot.querySelectorAll('.bookmarked').length).toBe 0
+      runs ->
+        expect(lines[0]).toHaveData("buffer-row", 3)
+        atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
+
+      waitsFor ->
+        editorElement.shadowRoot.querySelectorAll('.bookmarked').length is 0
 
     it "clears all bookmarks", ->
       editor.setCursorBufferPosition([3, 10])
       atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
-      editor.setCursorBufferPosition([5, 0])
-      atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
 
-      atom.commands.dispatch editorElement, 'bookmarks:clear-bookmarks'
+      waitsFor ->
+        editorElement.shadowRoot.querySelectorAll('.bookmarked').length is 1
 
-      expect(editorElement.shadowRoot.querySelectorAll('.bookmarked').length).toBe 0
-      expect(editor.findMarkers(class: 'bookmark')).toHaveLength 0
+      runs ->
+        editor.setCursorBufferPosition([5, 0])
+        atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
+
+      waitsFor ->
+        editorElement.shadowRoot.querySelectorAll('.bookmarked').length is 2
+
+      runs ->
+        atom.commands.dispatch editorElement, 'bookmarks:clear-bookmarks'
+
+      waitsFor ->
+        editorElement.shadowRoot.querySelectorAll('.bookmarked').length is 0
 
   describe "when a bookmark is invalidated", ->
     it "creates a marker when toggled", ->
       editor.setCursorBufferPosition([3, 10])
-      expect(editor.findMarkers(class: 'bookmark').length).toEqual 0
+      expect(bookmarkedRangesForEditor(editor).length).toBe 0
 
       atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
-      markers = editor.findMarkers(class: 'bookmark')
-      expect(markers.length).toEqual 1
+      expect(bookmarkedRangesForEditor(editor).length).toBe 1
 
       editor.setText('')
-      markers = editor.findMarkers(class: 'bookmark')
-      expect(markers.length).toEqual 0
+      expect(bookmarkedRangesForEditor(editor).length).toBe 0
 
   describe "jumping between bookmarks", ->
 

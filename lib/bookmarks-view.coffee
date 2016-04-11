@@ -4,7 +4,7 @@ path = require 'path'
 
 module.exports =
 class BookmarksView extends SelectListView
-  initialize: ->
+  initialize: (@editorsBookmarks) ->
     super
     @addClass('bookmarks-view')
 
@@ -34,31 +34,31 @@ class BookmarksView extends SelectListView
 
   getFilterText: (bookmark) ->
     segments = []
-    bookmarkRow = bookmark.marker.getStartPosition().row
+    bookmarkRow = bookmark.marker.getStartBufferPosition().row
     segments.push(bookmarkRow)
-    if bufferPath = bookmark.buffer.getPath()
+    if bufferPath = bookmark.editor.getPath()
       segments.push(bufferPath)
     if lineText = @getLineText(bookmark)
       segments.push(lineText)
     segments.join(' ')
 
   getLineText: (bookmark) ->
-    bookmark.buffer.lineForRow(bookmark.marker.getStartPosition().row)?.trim()
+    bookmark.editor.lineTextForBufferRow(bookmark.marker.getStartBufferPosition().row)?.trim()
 
   populateBookmarks: ->
     bookmarks = []
-    attributes = class: 'bookmark'
-    for buffer in atom.project.getBuffers()
-      for marker in buffer.findMarkers(attributes)
-        bookmark = {marker, buffer}
-        bookmark.fitlerText = @getFilterText(bookmark)
+    for editorBookmarks in @editorsBookmarks
+      editor = editorBookmarks.editor
+      for marker in editorBookmarks.markerLayer.getMarkers()
+        bookmark = {marker, editor}
+        bookmark.filterText = @getFilterText(bookmark)
         bookmarks.push(bookmark)
     @setItems(bookmarks)
 
   viewForItem: (bookmark) ->
-    bookmarkStartRow = bookmark.marker.getStartPosition().row
-    bookmarkEndRow = bookmark.marker.getEndPosition().row
-    if filePath = bookmark.buffer.getPath()
+    bookmarkStartRow = bookmark.marker.getStartBufferPosition().row
+    bookmarkEndRow = bookmark.marker.getEndBufferPosition().row
+    if filePath = bookmark.editor.getPath()
       bookmarkLocation = "#{path.basename(filePath)}:#{bookmarkStartRow + 1}"
     else
       bookmarkLocation = "untitled:#{bookmarkStartRow + 1}"
@@ -81,7 +81,7 @@ class BookmarksView extends SelectListView
     else
       super
 
-  confirmed: ({buffer, marker}) ->
-    atom.workspace.open(buffer.getPath(), searchAllPanes: true).then (editor) ->
-      editor.setSelectedBufferRange?(marker.getRange(), autoscroll: true)
+  confirmed: ({editor, marker}) ->
+    editor.setSelectedBufferRange(marker.getBufferRange(), autoscroll: true)
+    atom.workspace.paneForItem(editor).activate()
     @cancel()
