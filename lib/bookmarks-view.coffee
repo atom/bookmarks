@@ -8,6 +8,10 @@ class BookmarksView extends SelectListView
     super
     @addClass('bookmarks-view')
 
+  destroy: ->
+    @remove()
+    @panel.destroy()
+
   getFilterKey: ->
     'filterText'
 

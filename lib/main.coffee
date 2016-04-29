@@ -31,6 +31,7 @@ module.exports =
         bookmarks.destroy()
 
   deactivate: ->
+    bookmarksView?.remove()
     bookmarks.deactivate() for bookmarks in editorsBookmarks
     disposables.dispose()
 
