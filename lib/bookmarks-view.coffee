@@ -19,6 +19,7 @@ class BookmarksView extends SelectListView
     @storeFocusedElement()
     @panel ?= atom.workspace.addModalPanel(item: this)
     @panel.show()
+    @focusFilterEditor()
 
   hide: ->
     @panel.hide()
