@@ -2,7 +2,7 @@ _ = require 'underscore-plus'
 {CompositeDisposable} = require 'atom'
 
 module.exports =
-class ReactBookmarks
+class Bookmarks
   constructor: (@editor) ->
     @disposables = new CompositeDisposable
     @disposables.add atom.commands.add atom.views.getView(@editor),
@@ -16,6 +16,7 @@ class ReactBookmarks
     @disposables.add @editor.onDidDestroy(@destroy.bind(this))
 
   destroy: ->
+    @markerLayer.destroy()
     @disposables.dispose()
 
   toggleBookmark: =>
