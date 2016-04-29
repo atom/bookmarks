@@ -2,7 +2,7 @@
 {values} = require 'underscore-plus'
 
 describe "Bookmarks package", ->
-  [workspaceElement, editorElement, editor] = []
+  [workspaceElement, editorElement, editor, bookmarks] = []
 
   bookmarkedRangesForEditor = (editor) ->
     values(editor.decorationsStateForScreenRowRange(0, editor.getLastScreenRow()))
@@ -17,7 +17,7 @@ describe "Bookmarks package", ->
       atom.workspace.open('sample.js')
 
     waitsForPromise ->
-      atom.packages.activatePackage('bookmarks')
+      atom.packages.activatePackage('bookmarks').then (p) -> bookmarks = p.mainModule
 
     runs ->
       jasmine.attachToDOM(workspaceElement)
@@ -306,3 +306,41 @@ describe "Bookmarks package", ->
         runs ->
           expect(atom.workspace.getActiveTextEditor()).toEqual editor
           expect(editor.getCursorBufferPosition()).toEqual [8, 0]
+
+  describe "serializing/deserializing bookmarks", ->
+    [editor2, editorElement2] = []
+
+    beforeEach ->
+      waitsForPromise ->
+        atom.workspace.open('sample.coffee').then (e) ->
+          editor2 = e
+          editorElement2 = atom.views.getView(editor2)
+
+    it "restores bookmarks on all the previously open editors", ->
+      editor.setCursorScreenPosition([1, 2])
+      atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
+      editor2.setCursorScreenPosition([4, 5])
+      atom.commands.dispatch editorElement2, 'bookmarks:toggle-bookmark'
+
+      expect(bookmarkedRangesForEditor(editor)).toEqual [[[1, 2], [1, 2]]]
+      expect(bookmarkedRangesForEditor(editor2)).toEqual [[[4, 5], [4, 5]]]
+
+      state = bookmarks.serialize()
+      bookmarks.deactivate()
+      atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
+      atom.commands.dispatch editorElement2, 'bookmarks:toggle-bookmark'
+
+      # toggling the bookmark has no effect when the package is deactivated.
+      expect(bookmarkedRangesForEditor(editor)).toEqual []
+      expect(bookmarkedRangesForEditor(editor2)).toEqual []
+
+      bookmarks.activate(state)
+
+      expect(bookmarkedRangesForEditor(editor)).toEqual [[[1, 2], [1, 2]]]
+      expect(bookmarkedRangesForEditor(editor2)).toEqual [[[4, 5], [4, 5]]]
+
+      atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
+      atom.commands.dispatch editorElement2, 'bookmarks:toggle-bookmark'
+
+      expect(bookmarkedRangesForEditor(editor)).toEqual []
+      expect(bookmarkedRangesForEditor(editor2)).toEqual []

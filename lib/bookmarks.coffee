@@ -3,7 +3,10 @@ _ = require 'underscore-plus'
 
 module.exports =
 class Bookmarks
-  constructor: (@editor) ->
+  @deserialize: (editor, state) ->
+    new Bookmarks(editor, editor.getMarkerLayer(state.markerLayerId))
+
+  constructor: (@editor, @markerLayer) ->
     @disposables = new CompositeDisposable
     @disposables.add atom.commands.add atom.views.getView(@editor),
       'bookmarks:toggle-bookmark': @toggleBookmark
@@ -11,13 +14,21 @@ class Bookmarks
       'bookmarks:jump-to-previous-bookmark': @jumpToPreviousBookmark
       'bookmarks:clear-bookmarks': @clearBookmarks
 
-    @markerLayer = @editor.addMarkerLayer()
-    @editor.decorateMarkerLayer(@markerLayer, {type: 'line-number', class: 'bookmarked'})
+    markerLayerOptions = if @editor.displayLayer? then {persistent: true} else {maintainHistory: true}
+    @markerLayer ?= @editor.addMarkerLayer(markerLayerOptions)
+    @decorationLayer = @editor.decorateMarkerLayer(@markerLayer, {type: 'line-number', class: 'bookmarked'})
     @disposables.add @editor.onDidDestroy(@destroy.bind(this))
 
   destroy: ->
+    @deactivate()
     @markerLayer.destroy()
+
+  deactivate: ->
+    @decorationLayer.destroy()
     @disposables.dispose()
+
+  serialize: ->
+    {markerLayerId: @markerLayer.id}
 
   toggleBookmark: =>
     cursors = @editor.getCursors()
