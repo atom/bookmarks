@@ -8,6 +8,10 @@ class BookmarksView extends SelectListView
     super
     @addClass('bookmarks-view')
 
+  destroy: ->
+    @remove()
+    @panel.destroy()
+
   getFilterKey: ->
     'filterText'
 
@@ -15,22 +19,17 @@ class BookmarksView extends SelectListView
     @focusFilterEditor()
 
   show: ->
+    @populateBookmarks()
     @storeFocusedElement()
     @panel ?= atom.workspace.addModalPanel(item: this)
     @panel.show()
+    @focusFilterEditor()
 
   hide: ->
     @panel.hide()
 
   cancelled: ->
     @hide()
-
-  toggle: ->
-    if @isVisible()
-      @hide()
-    else
-      @populateBookmarks()
-      @show()
 
   getFilterText: (bookmark) ->
     segments = []
