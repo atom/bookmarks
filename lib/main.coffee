@@ -7,6 +7,14 @@ editorsBookmarks = null
 disposables = null
 
 module.exports =
+
+  config:
+    wrapBuffer:
+      title: 'Wrap Buffer'
+      description: 'When enabled, jumping to next bookmark after the last one will go back to the first bookmark, and jumping to the previous bookmark before the first one will go the last one. '
+      type: 'boolean'
+      default: true
+
   activate: (bookmarksByEditorId) ->
     editorsBookmarks = []
     bookmarksView = null
