@@ -17,6 +17,7 @@ class Bookmarks
     markerLayerOptions = if @editor.displayLayer? then {persistent: true} else {maintainHistory: true}
     @markerLayer ?= @editor.addMarkerLayer(markerLayerOptions)
     @decorationLayer = @editor.decorateMarkerLayer(@markerLayer, {type: 'line-number', class: 'bookmarked'})
+    @decorationLayerLine = @editor.decorateMarkerLayer(@markerLayer, {type: 'line', class: 'bookmarked'})
     @disposables.add @editor.onDidDestroy(@destroy.bind(this))
 
   destroy: ->
@@ -25,6 +26,7 @@ class Bookmarks
 
   deactivate: ->
     @decorationLayer.destroy()
+    @decorationLayerLine.destroy()
     @disposables.dispose()
 
   serialize: ->
@@ -32,8 +34,7 @@ class Bookmarks
 
   toggleBookmark: =>
     cursors = @editor.getCursors()
-    for cursor in cursors
-      range = @editor.getSelectedBufferRange()
+    for range in @editor.getSelectedBufferRanges()
       bookmarks = @markerLayer.findMarkers(intersectsBufferRowRange: [range.start.row, range.end.row])
 
       if bookmarks?.length > 0
@@ -70,7 +71,12 @@ class Bookmarks
       if marker.getBufferRange then marker.getBufferRange().start.row else marker
 
     bookmarkIndex--
-    bookmarkIndex = markers.length - 1 if bookmarkIndex < 0
+
+    if bookmarkIndex < 0
+      if atom.config.get('bookmarks.wrapBuffer')
+        bookmarkIndex = markers.length - 1
+      else
+        null
 
     markers[bookmarkIndex]
 
@@ -83,7 +89,12 @@ class Bookmarks
       if marker.getBufferRange then marker.getBufferRange().start.row else marker
 
     bookmarkIndex++ if markers[bookmarkIndex] and markers[bookmarkIndex].getBufferRange().start.row is bufferRow
-    bookmarkIndex = 0 if bookmarkIndex >= markers.length
+
+    if bookmarkIndex >= markers.length
+      if atom.config.get('bookmarks.wrapBuffer')
+        bookmarkIndex = 0
+      else
+        null
 
     markers[bookmarkIndex]
 
