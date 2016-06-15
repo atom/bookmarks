@@ -70,7 +70,12 @@ class Bookmarks
       if marker.getBufferRange then marker.getBufferRange().start.row else marker
 
     bookmarkIndex--
-    bookmarkIndex = markers.length - 1 if bookmarkIndex < 0
+
+    if bookmarkIndex < 0
+      if atom.config.get('bookmarks.wrapBuffer')
+        bookmarkIndex = markers.length - 1
+      else
+        null
 
     markers[bookmarkIndex]
 
@@ -83,7 +88,12 @@ class Bookmarks
       if marker.getBufferRange then marker.getBufferRange().start.row else marker
 
     bookmarkIndex++ if markers[bookmarkIndex] and markers[bookmarkIndex].getBufferRange().start.row is bufferRow
-    bookmarkIndex = 0 if bookmarkIndex >= markers.length
+
+    if bookmarkIndex >= markers.length
+      if atom.config.get('bookmarks.wrapBuffer')
+        bookmarkIndex = 0
+      else
+        null
 
     markers[bookmarkIndex]
 
