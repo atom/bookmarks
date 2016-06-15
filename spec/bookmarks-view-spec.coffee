@@ -49,7 +49,7 @@ describe "Bookmarks package", ->
         editor.addCursorAtBufferPosition([6, 11])
         expect(bookmarkedRangesForEditor(editor)).toEqual []
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
-        expect(bookmarkedRangesForEditor(editor)).toEqual [[[3, 10], [3, 10]],[[6, 11], [6, 11]]]
+        expect(bookmarkedRangesForEditor(editor)).toEqual [[[3, 10], [3, 10]], [[6, 11], [6, 11]]]
 
       it "removes multiple markers when toggled", ->
         editor.setCursorBufferPosition([3, 10])
