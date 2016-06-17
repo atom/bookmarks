@@ -83,4 +83,5 @@ class BookmarksView extends SelectListView
   confirmed: ({editor, marker}) ->
     editor.setSelectedBufferRange(marker.getBufferRange(), autoscroll: true)
     atom.workspace.paneForItem(editor).activate()
+    atom.workspace.paneForItem(editor).activateItem(editor)
     @cancel()
