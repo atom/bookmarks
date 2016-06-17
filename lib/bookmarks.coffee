@@ -41,6 +41,9 @@ class Bookmarks
       else
         @createBookmarkMarker(range)
 
+    if atom.workspace.getActivePane().getPendingItem() is @editor
+      atom.workspace.getActivePane().clearPendingItem();
+
   clearBookmarks: =>
     bookmark.destroy() for bookmark in @markerLayer.getMarkers()
 

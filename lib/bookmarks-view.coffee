@@ -48,6 +48,7 @@ class BookmarksView extends SelectListView
     bookmarks = []
     for editorBookmarks in @editorsBookmarks
       editor = editorBookmarks.editor
+      continue if editor not in atom.workspace.getTextEditors()
       for marker in editorBookmarks.markerLayer.getMarkers()
         bookmark = {marker, editor}
         bookmark.filterText = @getFilterText(bookmark)
