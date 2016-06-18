@@ -17,6 +17,7 @@ class Bookmarks
     markerLayerOptions = if @editor.displayLayer? then {persistent: true} else {maintainHistory: true}
     @markerLayer ?= @editor.addMarkerLayer(markerLayerOptions)
     @decorationLayer = @editor.decorateMarkerLayer(@markerLayer, {type: 'line-number', class: 'bookmarked'})
+    @decorationLayerLine = @editor.decorateMarkerLayer(@markerLayer, {type: 'line', class: 'bookmarked'})
     @disposables.add @editor.onDidDestroy(@destroy.bind(this))
 
   destroy: ->
@@ -25,6 +26,7 @@ class Bookmarks
 
   deactivate: ->
     @decorationLayer.destroy()
+    @decorationLayerLine.destroy()
     @disposables.dispose()
 
   serialize: ->

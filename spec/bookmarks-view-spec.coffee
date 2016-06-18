@@ -7,6 +7,7 @@ describe "Bookmarks package", ->
   bookmarkedRangesForEditor = (editor) ->
     values(editor.decorationsStateForScreenRowRange(0, editor.getLastScreenRow()))
       .filter (decoration) -> decoration.properties.class is 'bookmarked'
+      .filter (decoration) -> decoration.properties.type is 'line-number'
       .map (decoration) -> decoration.screenRange
 
   beforeEach ->
@@ -114,7 +115,7 @@ describe "Bookmarks package", ->
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
         expect(bookmarkedRangesForEditor(editor).length).toBe 0
 
-    it "toggles proper classes on proper gutter row", ->
+    it "toggles proper classes on proper gutter and line row", ->
       editor.setCursorBufferPosition([3, 10])
       expect(editorElement.shadowRoot.querySelectorAll('.bookmarked').length).toBe 0
 
@@ -122,7 +123,8 @@ describe "Bookmarks package", ->
       lines = []
 
       waitsFor ->
-        lines = editorElement.shadowRoot.querySelectorAll('.bookmarked')
+        editorElement.shadowRoot.querySelectorAll('.line.bookmarked').length is 1
+        lines = editorElement.shadowRoot.querySelectorAll('.line-number.bookmarked')
         lines.length is 1
 
       runs ->
@@ -130,27 +132,31 @@ describe "Bookmarks package", ->
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
 
       waitsFor ->
-        editorElement.shadowRoot.querySelectorAll('.bookmarked').length is 0
+        editorElement.shadowRoot.querySelectorAll('.line.bookmarked').length is 1
+        editorElement.shadowRoot.querySelectorAll('.line-number.bookmarked').length is 0
 
     it "clears all bookmarks", ->
       editor.setCursorBufferPosition([3, 10])
       atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
 
       waitsFor ->
-        editorElement.shadowRoot.querySelectorAll('.bookmarked').length is 1
+        editorElement.shadowRoot.querySelectorAll('.line.bookmarked').length is 1
+        editorElement.shadowRoot.querySelectorAll('.line-number.bookmarked').length is 1
 
       runs ->
         editor.setCursorBufferPosition([5, 0])
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
 
       waitsFor ->
-        editorElement.shadowRoot.querySelectorAll('.bookmarked').length is 2
+        editorElement.shadowRoot.querySelectorAll('.line.bookmarked').length is 2
+        editorElement.shadowRoot.querySelectorAll('.line-number.bookmarked').length is 2
 
       runs ->
         atom.commands.dispatch editorElement, 'bookmarks:clear-bookmarks'
 
       waitsFor ->
-        editorElement.shadowRoot.querySelectorAll('.bookmarked').length is 0
+        editorElement.shadowRoot.querySelectorAll('.line.bookmarked').length is 0
+        editorElement.shadowRoot.querySelectorAll('.line-number.bookmarked').length is 0
 
   describe "when a bookmark is invalidated", ->
     it "creates a marker when toggled", ->
