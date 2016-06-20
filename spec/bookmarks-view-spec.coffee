@@ -124,6 +124,7 @@ describe "Bookmarks package", ->
 
       waitsFor ->
         editorElement.shadowRoot.querySelectorAll('.line.bookmarked').length is 1
+      waitsFor ->
         lines = editorElement.shadowRoot.querySelectorAll('.line-number.bookmarked')
         lines.length is 1
 
@@ -133,6 +134,7 @@ describe "Bookmarks package", ->
 
       waitsFor ->
         editorElement.shadowRoot.querySelectorAll('.line.bookmarked').length is 1
+      waitsFor ->
         editorElement.shadowRoot.querySelectorAll('.line-number.bookmarked').length is 0
 
     it "clears all bookmarks", ->
@@ -141,6 +143,7 @@ describe "Bookmarks package", ->
 
       waitsFor ->
         editorElement.shadowRoot.querySelectorAll('.line.bookmarked').length is 1
+      waitsFor ->
         editorElement.shadowRoot.querySelectorAll('.line-number.bookmarked').length is 1
 
       runs ->
@@ -149,6 +152,7 @@ describe "Bookmarks package", ->
 
       waitsFor ->
         editorElement.shadowRoot.querySelectorAll('.line.bookmarked').length is 2
+      waitsFor ->
         editorElement.shadowRoot.querySelectorAll('.line-number.bookmarked').length is 2
 
       runs ->
@@ -156,6 +160,7 @@ describe "Bookmarks package", ->
 
       waitsFor ->
         editorElement.shadowRoot.querySelectorAll('.line.bookmarked').length is 0
+      waitsFor ->
         editorElement.shadowRoot.querySelectorAll('.line-number.bookmarked').length is 0
 
   describe "when a bookmark is invalidated", ->
