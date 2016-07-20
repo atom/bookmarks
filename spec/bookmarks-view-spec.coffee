@@ -115,7 +115,7 @@ describe "Bookmarks package", ->
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
         expect(bookmarkedRangesForEditor(editor).length).toBe 0
 
-    it "toggles proper classes on proper gutter and line row", ->
+    it "toggles proper classes on proper gutter, line row and highlight on point bookmark", ->
       editor.setCursorBufferPosition([3, 10])
       expect(editorElement.shadowRoot.querySelectorAll('.bookmarked').length).toBe 0
 
@@ -123,19 +123,49 @@ describe "Bookmarks package", ->
       lines = []
 
       waitsFor ->
-        editorElement.shadowRoot.querySelectorAll('.line.bookmarked').length is 1
+        lines = editorElement.shadowRoot.querySelectorAll('.line-number.bookmarked')
+        lines.length is 1
+
+      runs ->
+        expect(editorElement.shadowRoot.querySelectorAll('.highlight.bookmarked').length).toBe 0
+        expect(editorElement.shadowRoot.querySelectorAll('.line.bookmarked').length).toBe 1
+        expect(editorElement.shadowRoot.querySelectorAll('.line-number.bookmarked').length).toBe 1
+        expect(lines[0]).toHaveData("buffer-row", 3)
+        atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
+
+      waitsFor ->
+        editorElement.shadowRoot.querySelectorAll('.line-number.bookmarked').length is 0
+
+      runs ->
+        expect(editorElement.shadowRoot.querySelectorAll('.highlight.bookmarked').length).toBe 0
+        expect(editorElement.shadowRoot.querySelectorAll('.line.bookmarked').length).toBe 0
+        expect(editorElement.shadowRoot.querySelectorAll('.line-number.bookmarked').length).toBe 0
+
+    it "toggles proper classes on proper gutter, line row and highlight on range bookmark", ->
+      editor.setSelectedBufferRanges([[[3, 5], [3, 10]]])
+      expect(editorElement.shadowRoot.querySelectorAll('.bookmarked').length).toBe 0
+
+      atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
+      lines = []
+
       waitsFor ->
         lines = editorElement.shadowRoot.querySelectorAll('.line-number.bookmarked')
         lines.length is 1
 
       runs ->
+        expect(editorElement.shadowRoot.querySelectorAll('.highlight.bookmarked').length).toBe 1
+        expect(editorElement.shadowRoot.querySelectorAll('.line.bookmarked').length).toBe 1
+        expect(editorElement.shadowRoot.querySelectorAll('.line-number.bookmarked').length).toBe 1
         expect(lines[0]).toHaveData("buffer-row", 3)
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
 
       waitsFor ->
-        editorElement.shadowRoot.querySelectorAll('.line.bookmarked').length is 1
-      waitsFor ->
         editorElement.shadowRoot.querySelectorAll('.line-number.bookmarked').length is 0
+
+      runs ->
+        expect(editorElement.shadowRoot.querySelectorAll('.highlight.bookmarked').length).toBe 0
+        expect(editorElement.shadowRoot.querySelectorAll('.line.bookmarked').length).toBe 0
+        expect(editorElement.shadowRoot.querySelectorAll('.line-number.bookmarked').length).toBe 0
 
     it "clears all bookmarks", ->
       editor.setCursorBufferPosition([3, 10])
