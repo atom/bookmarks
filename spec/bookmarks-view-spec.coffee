@@ -281,7 +281,7 @@ describe "Bookmarks package", ->
             editor2 = e
             editorElement2 = atom.views.getView(editor2)
 
-      it "sets the cursor to the location of the bookmark and activated the right editor", ->
+      it "sets the cursor to the location of the bookmark and activates the right editor", ->
         editor.setCursorBufferPosition([8])
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
         editor.setCursorBufferPosition([0])
@@ -299,7 +299,7 @@ describe "Bookmarks package", ->
         runs ->
           expect(atom.workspace.getActiveTextEditor()).toEqual editor
 
-      it "searches the bookmark among all panes and editors", ->
+      it "searches for the bookmark among all panes and editors", ->
         editor.setCursorBufferPosition([8])
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
         editor.setCursorBufferPosition([0])
