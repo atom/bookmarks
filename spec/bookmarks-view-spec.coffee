@@ -289,6 +289,23 @@ describe "Bookmarks package", ->
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-previous-bookmark'
         expect(atom.beep.callCount).toBe 2
 
+      it "shows an icon when editor wraps around", ->
+        editor.config.set('bookmarks.wrapBuffer', true)
+        editor.setCursorBufferPosition([0, 0])
+        wrapIcon = bookmarks.getBookmarkForEditor(editor).wrapIcon
+        
+        expect(wrapIcon).not.toBeVisible()
+        atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
+        atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
+        expect(wrapIcon).not.toBeVisible()
+        atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
+        expect(wrapIcon).toBeVisible()
+        expect(wrapIcon).toHaveClass 'icon-move-up'
+
+        atom.commands.dispatch editorElement, 'bookmarks:jump-to-previous-bookmark'
+        expect(wrapIcon).toBeVisible()
+        expect(wrapIcon).toHaveClass 'icon-move-down'
+
   describe "browsing bookmarks", ->
     it "displays a select list of all bookmarks", ->
       editor.setCursorBufferPosition([0])

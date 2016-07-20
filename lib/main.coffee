@@ -43,6 +43,10 @@ module.exports =
     bookmarks.deactivate() for bookmarks in editorsBookmarks
     disposables.dispose()
 
+  getBookmarkForEditor: (editor) ->
+    for bookmark in editorsBookmarks
+      return bookmark if bookmark.editor.id is editor.id
+
   serialize: ->
     bookmarksByEditorId = {}
     for bookmarks in editorsBookmarks
