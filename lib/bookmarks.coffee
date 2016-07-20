@@ -31,9 +31,8 @@ class Bookmarks
     {markerLayerId: @markerLayer.id}
 
   toggleBookmark: =>
-    cursors = @editor.getCursors()
     for range in @editor.getSelectedBufferRanges()
-      bookmarks = @markerLayer.findMarkers(intersectsBufferRowRange: [range.start.row, range.end.row])
+      bookmarks = @markerLayer.findMarkers(intersectsRowRange: [range.start.row, range.end.row])
 
       if bookmarks?.length > 0
         bookmark.destroy() for bookmark in bookmarks
