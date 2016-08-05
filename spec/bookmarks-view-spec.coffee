@@ -273,11 +273,20 @@ describe "Bookmarks package", ->
       expect(bookmarks.find('.bookmark:eq(2)').find('.secondary-line').text()).toBe 'while(items.length > 0) {'
 
     describe "when a bookmark is selected", ->
-      it "sets the cursor to the location the bookmark", ->
+      [editor2, editorElement2] = []
+
+      beforeEach ->
+        waitsForPromise ->
+          atom.workspace.open('sample.coffee').then (e) ->
+            editor2 = e
+            editorElement2 = atom.views.getView(editor2)
+
+      it "sets the cursor to the location of the bookmark and activates the right editor", ->
         editor.setCursorBufferPosition([8])
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
         editor.setCursorBufferPosition([0])
 
+        atom.workspace.paneForItem(editor2).activateItem(editor2)
         atom.commands.dispatch workspaceElement, 'bookmarks:view-all'
 
         bookmarks = $(workspaceElement).find('.bookmarks-view')
@@ -287,11 +296,15 @@ describe "Bookmarks package", ->
         waitsFor ->
           editor.getCursorBufferPosition().isEqual([8, 0])
 
-      it "searches the bookmark among all panes", ->
+        runs ->
+          expect(atom.workspace.getActiveTextEditor()).toEqual editor
+
+      it "searches for the bookmark among all panes and editors", ->
         editor.setCursorBufferPosition([8])
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
         editor.setCursorBufferPosition([0])
 
+        atom.workspace.paneForItem(editor2).activateItem(editor2)
         pane1 = atom.workspace.getActivePane()
         pane1.splitRight()
         expect(atom.workspace.getActivePane()).not.toEqual pane1
