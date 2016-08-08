@@ -43,6 +43,52 @@ describe "Bookmarks package", ->
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
         expect(bookmarkedRangesForEditor(editor).length).toBe 0
 
+    describe "multiple point marker bookmark", ->
+      it "creates multiple markers when toggled", ->
+        editor.setCursorBufferPosition([3, 10])
+        editor.addCursorAtBufferPosition([6, 11])
+        expect(bookmarkedRangesForEditor(editor)).toEqual []
+        atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
+        expect(bookmarkedRangesForEditor(editor)).toEqual [[[3, 10], [3, 10]], [[6, 11], [6, 11]]]
+
+      it "removes multiple markers when toggled", ->
+        editor.setCursorBufferPosition([3, 10])
+        editor.addCursorAtBufferPosition([6, 11])
+        expect(bookmarkedRangesForEditor(editor).length).toBe 0
+        atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
+        expect(bookmarkedRangesForEditor(editor).length).toBe 2
+        atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
+        expect(bookmarkedRangesForEditor(editor).length).toBe 0
+
+      it "adds and removes multiple markers at the same time", ->
+        editor.setCursorBufferPosition([3, 10])
+        expect(bookmarkedRangesForEditor(editor).length).toBe 0
+        atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
+        expect(bookmarkedRangesForEditor(editor)).toEqual [[[3, 10], [3, 10]]]
+
+        editor.addCursorAtBufferPosition([6, 11])
+        atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
+        expect(bookmarkedRangesForEditor(editor)).toEqual [[[6, 11], [6, 11]]]
+
+        editor.addCursorAtBufferPosition([8, 8])
+        editor.addCursorAtBufferPosition([11, 8])
+        atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
+        expect(bookmarkedRangesForEditor(editor)).toEqual [[[3, 10], [3, 10]], [[8, 8], [8, 8]], [[11, 8], [11, 8]]]
+
+        # reset cursors, and try multiple cursors on same line but different ranges
+        editor.setCursorBufferPosition([8, 40])
+        atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
+        expect(bookmarkedRangesForEditor(editor)).toEqual [[[3, 10], [3, 10]], [[11, 8], [11, 8]]]
+
+        editor.addCursorAtBufferPosition([3, 0])
+        editor.addCursorAtBufferPosition([11, 0])
+        atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
+        expect(bookmarkedRangesForEditor(editor)).toEqual [[[8, 40], [8, 40]]]
+
+        editor.setCursorBufferPosition([8, 0])
+        atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
+        expect(bookmarkedRangesForEditor(editor).length).toBe 0
+
     describe "single line range marker bookmark", ->
       it "created a marker when toggled", ->
         editor.setSelectedBufferRanges([[[3, 5], [3, 10]]])
