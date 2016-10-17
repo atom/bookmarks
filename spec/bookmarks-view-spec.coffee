@@ -9,6 +9,13 @@ describe "Bookmarks package", ->
       .filter (decoration) -> decoration.properties.class is 'bookmarked'
       .map (decoration) -> decoration.screenRange
 
+  getBookmarkedLineNodes = (editorElement) ->
+    # TODO: Remove this after light DOM for editors ships on stable.
+    if editorElement.lightDOM
+      editorElement.querySelectorAll('.bookmarked')
+    else
+      editorElement.shadowRoot.querySelectorAll('.bookmarked')
+
   beforeEach ->
     spyOn(window, 'setImmediate').andCallFake (fn) -> fn()
     workspaceElement = atom.views.getView(atom.workspace)
@@ -162,13 +169,13 @@ describe "Bookmarks package", ->
 
     it "toggles proper classes on proper gutter row", ->
       editor.setCursorBufferPosition([3, 10])
-      expect(editorElement.shadowRoot.querySelectorAll('.bookmarked').length).toBe 0
+      expect(getBookmarkedLineNodes(editorElement).length).toBe 0
 
       atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
       lines = []
 
       waitsFor ->
-        lines = editorElement.shadowRoot.querySelectorAll('.bookmarked')
+        lines = getBookmarkedLineNodes(editorElement)
         lines.length is 1
 
       runs ->
@@ -176,27 +183,27 @@ describe "Bookmarks package", ->
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
 
       waitsFor ->
-        editorElement.shadowRoot.querySelectorAll('.bookmarked').length is 0
+        getBookmarkedLineNodes(editorElement).length is 0
 
     it "clears all bookmarks", ->
       editor.setCursorBufferPosition([3, 10])
       atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
 
       waitsFor ->
-        editorElement.shadowRoot.querySelectorAll('.bookmarked').length is 1
+        getBookmarkedLineNodes(editorElement).length is 1
 
       runs ->
         editor.setCursorBufferPosition([5, 0])
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
 
       waitsFor ->
-        editorElement.shadowRoot.querySelectorAll('.bookmarked').length is 2
+        getBookmarkedLineNodes(editorElement).length is 2
 
       runs ->
         atom.commands.dispatch editorElement, 'bookmarks:clear-bookmarks'
 
       waitsFor ->
-        editorElement.shadowRoot.querySelectorAll('.bookmarked').length is 0
+        getBookmarkedLineNodes(editorElement).length is 0
 
   describe "when a bookmark is invalidated", ->
     it "creates a marker when toggled", ->
