@@ -270,7 +270,8 @@ describe "Bookmarks package", ->
         editor.setSelectedBufferRanges([[[8, 4], [10, 0]]])
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
 
-      it "jump-to-next-bookmark finds next bookmark", ->
+      it "jump-to-next-bookmark finds next bookmark with wrapping", ->
+        editor.config.set('bookmarks.wrapBuffer', true)
         editor.setCursorBufferPosition([0, 0])
 
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
@@ -287,7 +288,8 @@ describe "Bookmarks package", ->
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
         expect(editor.getLastCursor().getBufferPosition()).toEqual [2, 0]
 
-      it "jump-to-previous-bookmark finds previous bookmark", ->
+      it "jump-to-previous-bookmark finds previous bookmark with wrapping", ->
+        editor.config.set('bookmarks.wrapBuffer', true)
         editor.setCursorBufferPosition([0, 0])
 
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-previous-bookmark'
@@ -303,6 +305,59 @@ describe "Bookmarks package", ->
 
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-previous-bookmark'
         expect(editor.getLastCursor().getMarker().getBufferRange()).toEqual [[8, 4], [10, 0]]
+
+      it "jump-to-next-bookmark locks without wrapping", ->
+        editor.config.set('bookmarks.wrapBuffer', false)
+        editor.setCursorBufferPosition([0, 0])
+
+        atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
+        expect(editor.getLastCursor().getBufferPosition()).toEqual [2, 0]
+
+        atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
+        expect(editor.getLastCursor().getMarker().getBufferRange()).toEqual [[8, 4], [10, 0]]
+
+        atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
+        expect(atom.beep.callCount).toBe 1
+
+        editor.setCursorBufferPosition([11, 0])
+
+        atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
+        expect(atom.beep.callCount).toBe 2
+
+      it "jump-to-previous-bookmark locks without wrapping", ->
+        editor.config.set('bookmarks.wrapBuffer', false)
+        editor.setCursorBufferPosition([11, 0])
+
+        atom.commands.dispatch editorElement, 'bookmarks:jump-to-previous-bookmark'
+        expect(editor.getLastCursor().getMarker().getBufferRange()).toEqual [[8, 4], [10, 0]]
+
+        atom.commands.dispatch editorElement, 'bookmarks:jump-to-previous-bookmark'
+        expect(editor.getLastCursor().getBufferPosition()).toEqual [2, 0]
+
+        atom.commands.dispatch editorElement, 'bookmarks:jump-to-previous-bookmark'
+        expect(atom.beep.callCount).toBe 1
+
+        editor.setCursorBufferPosition([0, 0])
+
+        atom.commands.dispatch editorElement, 'bookmarks:jump-to-previous-bookmark'
+        expect(atom.beep.callCount).toBe 2
+
+      it "shows an icon when editor wraps around", ->
+        editor.config.set('bookmarks.wrapBuffer', true)
+        editor.setCursorBufferPosition([0, 0])
+        wrapIcon = bookmarks.getBookmarkForEditor(editor).wrapIcon
+        
+        expect(wrapIcon).not.toBeVisible()
+        atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
+        atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
+        expect(wrapIcon).not.toBeVisible()
+        atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
+        expect(wrapIcon).toBeVisible()
+        expect(wrapIcon).toHaveClass 'icon-move-up'
+
+        atom.commands.dispatch editorElement, 'bookmarks:jump-to-previous-bookmark'
+        expect(wrapIcon).toBeVisible()
+        expect(wrapIcon).toHaveClass 'icon-move-down'
 
   describe "browsing bookmarks", ->
     it "displays a select list of all bookmarks", ->

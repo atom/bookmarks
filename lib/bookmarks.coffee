@@ -1,4 +1,5 @@
 _ = require 'underscore-plus'
+{$} = require 'atom-space-pen-views'
 {CompositeDisposable} = require 'atom'
 
 module.exports =
@@ -18,6 +19,12 @@ class Bookmarks
     @markerLayer ?= @editor.addMarkerLayer(markerLayerOptions)
     @decorationLayer = @editor.decorateMarkerLayer(@markerLayer, {type: 'line-number', class: 'bookmarked'})
     @disposables.add @editor.onDidDestroy(@destroy.bind(this))
+    @createWrapIcon()
+
+  createWrapIcon: ->
+    wrapIcon = document.createElement('div')
+    wrapIcon.classList.add('bookmark-wrap-icon')
+    @wrapIcon = $(wrapIcon)
 
   destroy: ->
     @deactivate()
@@ -59,6 +66,19 @@ class Bookmarks
     else
       atom.beep()
 
+  showWrapIcon: (icon) ->
+    editorView = atom.views.getView(@editor)
+    return unless editorView?.parentNode?
+
+    # Attach to the parent of the active editor, that way we can position it
+    # correctly over the active editor.
+    editorView.parentNode.appendChild(@wrapIcon[0])
+
+    # FIXME: This animation should be in CSS
+    @wrapIcon.attr('class', "bookmark-wrap-icon #{icon}").fadeIn()
+    clearTimeout(@wrapTimeout)
+    @wrapTimeout = setTimeout (=> @wrapIcon.fadeOut()), 1000
+
   getPreviousBookmark: (bufferRow) ->
     markers = @markerLayer.getMarkers()
     return null unless markers.length
@@ -68,7 +88,13 @@ class Bookmarks
       if marker.getBufferRange then marker.getBufferRange().start.row else marker
 
     bookmarkIndex--
-    bookmarkIndex = markers.length - 1 if bookmarkIndex < 0
+
+    if bookmarkIndex < 0
+      if atom.config.get('bookmarks.wrapBuffer')
+        @showWrapIcon('icon-move-down')
+        bookmarkIndex = markers.length - 1
+      else
+        null
 
     markers[bookmarkIndex]
 
@@ -81,7 +107,13 @@ class Bookmarks
       if marker.getBufferRange then marker.getBufferRange().start.row else marker
 
     bookmarkIndex++ if markers[bookmarkIndex] and markers[bookmarkIndex].getBufferRange().start.row is bufferRow
-    bookmarkIndex = 0 if bookmarkIndex >= markers.length
+
+    if bookmarkIndex >= markers.length
+      if atom.config.get('bookmarks.wrapBuffer')
+        @showWrapIcon('icon-move-up')
+        bookmarkIndex = 0
+      else
+        null
 
     markers[bookmarkIndex]
 

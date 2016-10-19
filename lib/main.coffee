@@ -7,6 +7,14 @@ editorsBookmarks = null
 disposables = null
 
 module.exports =
+
+  config:
+    wrapBuffer:
+      title: 'Wrap Buffer'
+      description: 'When enabled, jumping to next or previous bookmark can wrap around the buffer.'
+      type: 'boolean'
+      default: true
+
   activate: (bookmarksByEditorId) ->
     editorsBookmarks = []
     bookmarksView = null
@@ -34,6 +42,10 @@ module.exports =
     bookmarksView?.destroy()
     bookmarks.deactivate() for bookmarks in editorsBookmarks
     disposables.dispose()
+
+  getBookmarkForEditor: (editor) ->
+    for bookmark in editorsBookmarks
+      return bookmark if bookmark.editor.id is editor.id
 
   serialize: ->
     bookmarksByEditorId = {}
