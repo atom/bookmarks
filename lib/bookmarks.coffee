@@ -43,47 +43,24 @@ class Bookmarks
     bookmark.destroy() for bookmark in @markerLayer.getMarkers()
 
   jumpToNextBookmark: =>
-    @jumpToBookmark('getNextBookmark')
-
-  jumpToPreviousBookmark: =>
-    @jumpToBookmark('getPreviousBookmark')
-
-  jumpToBookmark: (getBookmarkFunction) =>
-    cursor = @editor.getLastCursor()
-    position = cursor.getMarker().getStartBufferPosition()
-    bookmarkMarker = @[getBookmarkFunction](position.row)
-
-    if bookmarkMarker
+    if @markerLayer.getMarkerCount() > 0
+      bufferRow = @editor.getLastCursor().getMarker().getStartBufferPosition().row
+      markers = @markerLayer.getMarkers().sort((a, b) -> a.compare(b))
+      bookmarkMarker = markers.find((marker) -> marker.getBufferRange().start.row > bufferRow) ? markers[0]
       @editor.setSelectedBufferRange(bookmarkMarker.getBufferRange(), autoscroll: false)
       @editor.scrollToCursorPosition()
     else
       atom.beep()
 
-  getPreviousBookmark: (bufferRow) ->
-    markers = @markerLayer.getMarkers()
-    return null unless markers.length
-    return markers[0] if markers.length is 1
-
-    bookmarkIndex = _.sortedIndex markers, bufferRow, (marker) ->
-      if marker.getBufferRange then marker.getBufferRange().start.row else marker
-
-    bookmarkIndex--
-    bookmarkIndex = markers.length - 1 if bookmarkIndex < 0
-
-    markers[bookmarkIndex]
-
-  getNextBookmark: (bufferRow) ->
-    markers = @markerLayer.getMarkers()
-    return null unless markers.length
-    return markers[0] if markers.length is 1
-
-    bookmarkIndex = _.sortedIndex markers, bufferRow, (marker) ->
-      if marker.getBufferRange then marker.getBufferRange().start.row else marker
-
-    bookmarkIndex++ if markers[bookmarkIndex] and markers[bookmarkIndex].getBufferRange().start.row is bufferRow
-    bookmarkIndex = 0 if bookmarkIndex >= markers.length
-
-    markers[bookmarkIndex]
+  jumpToPreviousBookmark: =>
+    if @markerLayer.getMarkerCount() > 0
+      bufferRow = @editor.getLastCursor().getMarker().getStartBufferPosition().row
+      markers = @markerLayer.getMarkers().sort((a, b) -> b.compare(a))
+      bookmarkMarker = markers.find((marker) -> marker.getBufferRange().start.row < bufferRow) ? markers[0]
+      @editor.setSelectedBufferRange(bookmarkMarker.getBufferRange(), autoscroll: false)
+      @editor.scrollToCursorPosition()
+    else
+      atom.beep()
 
   createBookmarkMarker: (range) ->
     bookmark = @markerLayer.markBufferRange(range, {invalidate: 'surround'})
