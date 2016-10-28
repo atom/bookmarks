@@ -1,11 +1,12 @@
 {$} = require 'atom-space-pen-views'
-{values} = require 'underscore-plus'
 
 describe "Bookmarks package", ->
   [workspaceElement, editorElement, editor, bookmarks] = []
 
   bookmarkedRangesForEditor = (editor) ->
-    values(editor.decorationsStateForScreenRowRange(0, editor.getLastScreenRow()))
+    decorationsById = editor.decorationsStateForScreenRowRange(0, editor.getLastScreenRow())
+    decorations = Object.keys(decorationsById).map((key) -> decorationsById[key])
+    decorations
       .filter (decoration) -> decoration.properties.class is 'bookmarked'
       .map (decoration) -> decoration.screenRange
 
