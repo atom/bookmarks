@@ -1,11 +1,12 @@
 {$} = require 'atom-space-pen-views'
-{values} = require 'underscore-plus'
 
 describe "Bookmarks package", ->
   [workspaceElement, editorElement, editor, bookmarks] = []
 
   bookmarkedRangesForEditor = (editor) ->
-    values(editor.decorationsStateForScreenRowRange(0, editor.getLastScreenRow()))
+    decorationsById = editor.decorationsStateForScreenRowRange(0, editor.getLastScreenRow())
+    decorations = Object.keys(decorationsById).map((key) -> decorationsById[key])
+    decorations
       .filter (decoration) -> decoration.properties.class is 'bookmarked'
       .map (decoration) -> decoration.screenRange
 
@@ -270,11 +271,17 @@ describe "Bookmarks package", ->
         editor.setSelectedBufferRanges([[[8, 4], [10, 0]]])
         atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
 
+        editor.setCursorBufferPosition([5, 0])
+        atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
+
       it "jump-to-next-bookmark finds next bookmark", ->
         editor.setCursorBufferPosition([0, 0])
 
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
         expect(editor.getLastCursor().getBufferPosition()).toEqual [2, 0]
+
+        atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
+        expect(editor.getLastCursor().getBufferPosition()).toEqual [5, 0]
 
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
         expect(editor.getLastCursor().getMarker().getBufferRange()).toEqual [[8, 4], [10, 0]]
@@ -292,6 +299,9 @@ describe "Bookmarks package", ->
 
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-previous-bookmark'
         expect(editor.getLastCursor().getMarker().getBufferRange()).toEqual [[8, 4], [10, 0]]
+
+        atom.commands.dispatch editorElement, 'bookmarks:jump-to-previous-bookmark'
+        expect(editor.getLastCursor().getBufferPosition()).toEqual [5, 0]
 
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-previous-bookmark'
         expect(editor.getLastCursor().getBufferPosition()).toEqual [2, 0]
