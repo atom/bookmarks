@@ -314,6 +314,30 @@ describe "Bookmarks package", ->
         atom.commands.dispatch editorElement, 'bookmarks:jump-to-previous-bookmark'
         expect(editor.getLastCursor().getMarker().getBufferRange()).toEqual [[8, 4], [10, 0]]
 
+  describe "when inserting text next to the bookmark", ->
+    beforeEach ->
+      editor.setSelectedBufferRanges([[[3, 10], [3, 25]]])
+      expect(bookmarkedRangesForEditor(editor).length).toBe 0
+
+      atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
+      expect(bookmarkedRangesForEditor(editor).length).toBe 1
+
+    it "moves the bookmarked range forward when typing in the start", ->
+      editor.setCursorBufferPosition([3, 10])
+      editor.insertText('Hello')
+      editor.setCursorBufferPosition([0, 0])
+
+      atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
+      expect(editor.getLastCursor().getMarker().getBufferRange()).toEqual [[3, 15], [3, 30]]
+
+    it "doesnt extend the bookmarked range when typing in the end", ->
+      editor.setCursorBufferPosition([3, 25])
+      editor.insertText('Hello')
+      editor.setCursorBufferPosition([0, 0])
+
+      atom.commands.dispatch editorElement, 'bookmarks:jump-to-next-bookmark'
+      expect(editor.getLastCursor().getMarker().getBufferRange()).toEqual [[3, 10], [3, 25]]
+
   describe "browsing bookmarks", ->
     it "displays a select list of all bookmarks", ->
       editor.setCursorBufferPosition([0])
