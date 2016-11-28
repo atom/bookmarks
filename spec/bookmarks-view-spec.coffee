@@ -1,5 +1,3 @@
-{$} = require 'atom-space-pen-views'
-
 describe "Bookmarks package", ->
   [workspaceElement, editorElement, editor, bookmarks] = []
 
