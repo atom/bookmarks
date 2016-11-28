@@ -2,7 +2,7 @@
 
 Bookmarks = null
 ReactBookmarks = null
-BookmarksView = null
+BookmarksView = require './bookmarks-view'
 editorsBookmarks = null
 disposables = null
 
@@ -14,7 +14,6 @@ module.exports =
 
     atom.commands.add 'atom-workspace',
       'bookmarks:view-all', ->
-        BookmarksView ?= require './bookmarks-view'
         bookmarksView ?= new BookmarksView(editorsBookmarks)
         bookmarksView.show()
 
