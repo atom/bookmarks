@@ -9,7 +9,7 @@
     "atom": "*"
   },
   "dependencies": {
-    "atom-space-pen-views": "^2.0.0"
+    "atom-select-list": "0.0.4"
   },
   "devDependencies": {
     "coffeelint": "^1.9.7"

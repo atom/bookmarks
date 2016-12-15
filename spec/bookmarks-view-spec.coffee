@@ -1,5 +1,3 @@
-{$} = require 'atom-space-pen-views'
-
 describe "Bookmarks package", ->
   [workspaceElement, editorElement, editor, bookmarks] = []
 
@@ -349,15 +347,18 @@ describe "Bookmarks package", ->
 
       atom.commands.dispatch workspaceElement, 'bookmarks:view-all'
 
-      bookmarks = $(workspaceElement).find('.bookmarks-view')
-      expect(bookmarks).toExist()
-      expect(bookmarks.find('.bookmark').length).toBe 3
-      expect(bookmarks.find('.bookmark:eq(0)').find('.primary-line').text()).toBe 'sample.js:1'
-      expect(bookmarks.find('.bookmark:eq(0)').find('.secondary-line').text()).toBe 'var quicksort = function () {'
-      expect(bookmarks.find('.bookmark:eq(1)').find('.primary-line').text()).toBe 'sample.js:3'
-      expect(bookmarks.find('.bookmark:eq(1)').find('.secondary-line').text()).toBe 'if (items.length <= 1) return items;'
-      expect(bookmarks.find('.bookmark:eq(2)').find('.primary-line').text()).toBe 'sample.js:5'
-      expect(bookmarks.find('.bookmark:eq(2)').find('.secondary-line').text()).toBe 'while(items.length > 0) {'
+      waitsFor ->
+        workspaceElement.querySelector('.bookmarks-view')
+
+      runs ->
+        bookmarks = workspaceElement.querySelectorAll('.bookmark')
+        expect(bookmarks.length).toBe 3
+        expect(bookmarks[0].querySelector('.primary-line').textContent).toBe 'sample.js:1'
+        expect(bookmarks[0].querySelector('.secondary-line').textContent).toBe 'var quicksort = function () {'
+        expect(bookmarks[1].querySelector('.primary-line').textContent).toBe 'sample.js:3'
+        expect(bookmarks[1].querySelector('.secondary-line').textContent).toBe 'if (items.length <= 1) return items;'
+        expect(bookmarks[2].querySelector('.primary-line').textContent).toBe 'sample.js:5'
+        expect(bookmarks[2].querySelector('.secondary-line').textContent).toBe 'while(items.length > 0) {'
 
     describe "when a bookmark is selected", ->
       [editor2, editorElement2] = []
@@ -376,9 +377,11 @@ describe "Bookmarks package", ->
         atom.workspace.paneForItem(editor2).activateItem(editor2)
         atom.commands.dispatch workspaceElement, 'bookmarks:view-all'
 
-        bookmarks = $(workspaceElement).find('.bookmarks-view')
-        expect(bookmarks).toExist()
-        bookmarks.find('.bookmark').mousedown().mouseup()
+        waitsFor ->
+          workspaceElement.querySelector('.bookmarks-view')
+
+        runs ->
+          workspaceElement.querySelector('.bookmark').click()
 
         waitsFor ->
           editor.getCursorBufferPosition().isEqual([8, 0])
@@ -397,8 +400,13 @@ describe "Bookmarks package", ->
         expect(atom.workspace.getActivePane()).not.toEqual pane1
 
         atom.commands.dispatch workspaceElement, 'bookmarks:view-all'
-        bookmarkElement = workspaceElement.querySelector('.bookmarks-view .bookmark')
-        atom.commands.dispatch bookmarkElement, 'core:confirm'
+        bookmarkElement = null
+
+        waitsFor ->
+          bookmarkElement = workspaceElement.querySelector('.bookmarks-view .bookmark')
+
+        runs ->
+          atom.commands.dispatch bookmarkElement, 'core:confirm'
 
         waitsFor ->
           atom.workspace.getActivePane() is pane1
