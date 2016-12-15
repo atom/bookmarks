@@ -8,8 +8,8 @@
   'cmd-shift-f2': 'bookmarks:clear-bookmarks'
 
 '.platform-win32 atom-text-editor':
-  'alt-ctrl-f2': 'bookmarks:toggle-bookmark'
-  'ctrl-shift-f2': 'bookmarks:clear-bookmarks'
+  'ctrl-shift-f2': 'bookmarks:toggle-bookmark'
+  'alt-shift-f2': 'bookmarks:clear-bookmarks'
 
 '.platform-linux atom-text-editor':
   'ctrl-shift-f2': 'bookmarks:toggle-bookmark'
