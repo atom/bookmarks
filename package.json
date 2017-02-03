@@ -9,7 +9,7 @@
     "atom": "*"
   },
   "dependencies": {
-    "atom-select-list": "0.0.4"
+    "atom-select-list": "0.0.12"
   },
   "devDependencies": {
     "coffeelint": "^1.9.7"
