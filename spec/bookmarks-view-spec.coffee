@@ -9,11 +9,7 @@ describe "Bookmarks package", ->
       .map (decoration) -> decoration.screenRange
 
   getBookmarkedLineNodes = (editorElement) ->
-    # TODO: Remove this after light DOM for editors ships on stable.
-    if editorElement.lightDOM
-      editorElement.querySelectorAll('.bookmarked')
-    else
-      editorElement.shadowRoot.querySelectorAll('.bookmarked')
+    editorElement.querySelectorAll('.bookmarked')
 
   beforeEach ->
     spyOn(window, 'setImmediate').andCallFake (fn) -> fn()
