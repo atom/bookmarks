@@ -9,6 +9,7 @@ disposables = null
 module.exports =
   activate: (bookmarksByEditorId) ->
     editorsBookmarks = []
+    watchedEditors = new WeakSet()
     bookmarksView = null
     disposables = new CompositeDisposable
 
@@ -18,16 +19,20 @@ module.exports =
         bookmarksView.show()
 
     atom.workspace.observeTextEditors (textEditor) ->
+      return if watchedEditors.has(textEditor)
+
       Bookmarks ?= require './bookmarks'
       if state = bookmarksByEditorId[textEditor.id]
         bookmarks = Bookmarks.deserialize(textEditor, state)
       else
         bookmarks = new Bookmarks(textEditor)
       editorsBookmarks.push(bookmarks)
+      watchedEditors.add(textEditor)
       disposables.add textEditor.onDidDestroy ->
         index = editorsBookmarks.indexOf(bookmarks)
         editorsBookmarks.splice(index, 1) if index isnt -1
         bookmarks.destroy()
+        watchedEditors.delete(textEditor)
 
   deactivate: ->
     bookmarksView?.destroy()
