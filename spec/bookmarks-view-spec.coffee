@@ -448,3 +448,33 @@ describe "Bookmarks package", ->
 
       expect(bookmarkedRangesForEditor(editor)).toEqual []
       expect(bookmarkedRangesForEditor(editor2)).toEqual []
+
+  describe "selecting bookmarks", ->
+
+    it "doesnt die when no bookmarks", ->
+      editor.setCursorBufferPosition([5, 10])
+
+      atom.commands.dispatch editorElement, 'bookmarks:select-to-next-bookmark'
+      expect(editor.getLastCursor().getBufferPosition()).toEqual [5, 10]
+      expect(atom.beep.callCount).toBe 1
+
+      atom.commands.dispatch editorElement, 'bookmarks:select-to-previous-bookmark'
+      expect(editor.getLastCursor().getBufferPosition()).toEqual [5, 10]
+      expect(atom.beep.callCount).toBe 2
+
+    describe "with one bookmark", ->
+      beforeEach ->
+        editor.setCursorBufferPosition([2, 0])
+        atom.commands.dispatch editorElement, 'bookmarks:toggle-bookmark'
+
+      it "select-to-next-bookmark selects to the right place", ->
+        editor.setCursorBufferPosition([0, 0])
+
+        atom.commands.dispatch editorElement, 'bookmarks:select-to-next-bookmark'
+        expect(editor.getSelectedBufferRange()).toEqual([[0, 0], [2, 0]])
+
+      it "select-to-previous-bookmark selects to the right place", ->
+        editor.setCursorBufferPosition([4, 0])
+
+        atom.commands.dispatch editorElement, 'bookmarks:select-to-previous-bookmark'
+        expect(editor.getSelectedBufferRange()).toEqual([[4, 0], [2, 0]])
