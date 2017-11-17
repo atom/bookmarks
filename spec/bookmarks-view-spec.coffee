@@ -450,7 +450,6 @@ describe "Bookmarks package", ->
       expect(bookmarkedRangesForEditor(editor2)).toEqual []
 
   describe "selecting bookmarks", ->
-
     it "doesnt die when no bookmarks", ->
       editor.setCursorBufferPosition([5, 10])
 
