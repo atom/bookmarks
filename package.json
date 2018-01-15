@@ -1,6 +1,6 @@
 {
   "name": "bookmarks",
-  "version": "0.44.4",
+  "version": "0.45.1",
   "main": "./lib/main",
   "description": "Can mark lines, then jump back to them",
   "license": "MIT",
@@ -9,7 +9,7 @@
     "atom": "*"
   },
   "dependencies": {
-    "atom-select-list": "^0.1.0"
+    "atom-select-list": "^0.7.0"
   },
   "devDependencies": {
     "coffeelint": "^1.9.7"
