@@ -472,8 +472,20 @@ describe "Bookmarks package", ->
         atom.commands.dispatch editorElement, 'bookmarks:select-to-next-bookmark'
         expect(editor.getSelectedBufferRange()).toEqual([[0, 0], [2, 0]])
 
+      it "select-to-next-bookmark selects to the only bookmark", ->
+        editor.setCursorBufferPosition([4, 0])
+
+        atom.commands.dispatch editorElement, 'bookmarks:select-to-next-bookmark'
+        expect(editor.getSelectedBufferRange()).toEqual([[4, 0], [2, 0]])
+
       it "select-to-previous-bookmark selects to the right place", ->
         editor.setCursorBufferPosition([4, 0])
 
         atom.commands.dispatch editorElement, 'bookmarks:select-to-previous-bookmark'
         expect(editor.getSelectedBufferRange()).toEqual([[4, 0], [2, 0]])
+
+      it "select-to-previous-bookmark selects to the only bookmark", ->
+        editor.setCursorBufferPosition([0, 0])
+
+        atom.commands.dispatch editorElement, 'bookmarks:select-to-previous-bookmark'
+        expect(editor.getSelectedBufferRange()).toEqual([[0, 0], [2, 0]])
