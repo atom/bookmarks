@@ -12,6 +12,20 @@
     "atom-select-list": "^0.7.0"
   },
   "devDependencies": {
-    "coffeelint": "^1.9.7"
+    "standard": "^10.0.3"
+  },
+  "standard": {
+    "env": [
+      "browser",
+      "node",
+      "atomtest",
+      "jasmine"
+    ],
+    "globals": [
+      "atom"
+    ],
+    "ignore": [
+      "spec/fixtures"
+    ]
   }
 }
