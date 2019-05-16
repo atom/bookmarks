@@ -16,3 +16,8 @@
     ]
   }
 ]
+'context-menu': {
+  'atom-text-editor': [
+    { 'label': 'Toggle bookmark', 'command': 'bookmarks:toggle-bookmark' }
+  ]
+}
