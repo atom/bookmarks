@@ -12,7 +12,6 @@
     "atom-select-list": "^0.7.0"
   },
   "devDependencies": {
-    "coffeelint": "^1.9.7",
     "standard": "^10.0.3"
   },
   "standard": {
@@ -24,6 +23,9 @@
     ],
     "globals": [
       "atom"
+    ],
+    "ignore": [
+      "spec/fixtures"
     ]
   }
 }
